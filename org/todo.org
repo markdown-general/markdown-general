@@ -1,0 +1,20 @@
+Regular todo's
+* https://github.com/sarwarbeing-ai/Agentic_Design_Patterns/blob/main/Agentic_Design_Patterns.pdf
+* ToDo make a rate limit detector.
+* bug: metadata looks corrupted (base/_index.md)
+* bug: front matter looks corrupted in preview (base/attack.md)
+* bug: note ellipse metadata is great and so a good example of what to do (base/ellipse.md)
+* bug: needs cleanup (base/emacs-config.md)
+* bug: add metadata dates (base/publication-workflow.md)
+* bug: publish looks very messy (base/publish.md)
+* bug: make runnable? (base/repo_maintenance_task.md)
+* ToDo research prompt engioneering patterns
+
+# Prompt Engineering Patterns
+- Chain-of-thought: Add "think step-by-step" for reasoning tasks
+- Few-shot: Provide 2-3 examples before asking
+- XML tags: Structure complex inputs for clarity
+
+* ToDo daily mash
+* ToDo find all the ToDos and Nexts
+* ToDo design a daily practice
