@@ -1,27 +1,13 @@
 # mash/
 
 one must imagine mash/ happy;
-so we mash
-
----
+here we mash
 
 ## flow
-- ingest/ is a staging area for stuff that is to be turned into markdown suitable for content/. This process can iterate ingest/a/ -> ingest/b -> (ingest/ c, content/d)
+- ingest/ is a staging area for stuff that is to be turned into markdown suitable for content/. This process digests material slowly - it may split into parts, iterate through stages (ingest/a/ -> ingest/b/), but will eventually be consumed and disappear.
 - content/ is a space containing curated, condensed content available for upstream, or used as context for mashing
 - artifacts/ is a space for curated non-text material (binary, images, svg)
 - org/ operational todos and holes in content weaves. A system where problems are sent "up times arrow" for future resolution.
-
-## Tips and Tricks 
-
-- we ingest/ with our TEETHS!!!
-- cascade mashing is to be avoided except when we really need to
-- stuckedness is to be avoided.
-- desire for change generates new ingest/ from old content/
-- ingest/ are change agents and should have a todo
-- ingest/ is consumed via processing of todo items into content/ (with artifacts/)
-- there is no archival requirement
-- org/ drives mash/ with operational todos
-- Regular commits of the ~/mash/ repo
 
 ### Conversion
 - pandoc --from=org --to=gfm input.org -o output.md
@@ -37,39 +23,34 @@ so we mash
 
 ### Access
 - content/base/ immediate
-- content specified 
+- content/self specified
+- content specified
 - ingest/ specified
 - org/ logistics
 - artifacts/ logistics
 
 ## Structure
 
-### content/self
+### content/self & artifacts/self
 
-- **Experiential** ephemeral, watch this space.
-- **Experimental**: Often content/ under study or in development.
-- *Personalized* subject to variation
+Personal content. Not included in repository
 
 ### content/base/
 
-- **Generative**: Includes source material for informed building of content/
-- **concrete** permanent/semi-permanent content
+General, reusable content neutral to knowledge origin:
+- **Generative**: source material for informed building of content/
 - **reference**: frequently referenced by AI
 - **flow**: understanding of the flow
 - **curated**: dense, high-quality
-- **synthetic**: neutral to knowledge origin
 - **kit**: toolkit for mashing
   
 ### artifacts/
 - Supporting files referenced from markdown content
 - Images, PDFs, code files, data files
 - Cross-referenced from markdown
-                
----
 
-### Style
-
-style is fancy content
+### org/
+- todo mangement
 
 ### Tools
 
@@ -82,5 +63,14 @@ We will at least try to mash documentation testing code and execution into a mar
 - short commits. one-line. no overthinking.
 - no branding. ever.
 
+## Tips and Tricks 
 
+- we ingest/ with our TEETHS!!!
+- **cascade mashing**: chaining multiple AI processing steps on the same content.
+- stuckedness is to be avoided.
+- desire for change generates new ingest/ from old content/
+- ingest/ is consumed via processing into content/ (with artifacts/)
+- there is no archival requirement
+- org/ plans mash/ with todos
+- Regular commits of the ~/mash/ repo
 
