@@ -364,6 +364,13 @@ main = do
 
 ## status
 
+**Installation Cost:**
+  - Tokens: unknown
+  - Cache: 0 read, 0 created
+  - Time: 9s
+  - Model: claude-haiku-4-5-20251001
+  - Installed: 2026-01-01 05:44 UTC
+
 **Tests:**
 - doctests: not yet run
 - tick: not yet run

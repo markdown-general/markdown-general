@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(markdown-unlit main:*)",
+      "Bash(cabal build:*)",
+      "Bash(cabal install:*)",
+      "Bash(ccusage blocks:*)",
+      "Bash(ccusage:*)",
+      "Bash(~/.cabal/bin/card-api install:*)"
+    ]
+  }
+}
