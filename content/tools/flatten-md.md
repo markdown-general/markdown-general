@@ -14,25 +14,9 @@ Delimiters use HTML comments so they're invisible when rendered:
 <!-- END FILE -->
 ```
 
-## why flatten
-
-**Single file review** ⟜ examine entire codebase in one view
-**LLM context** ⟜ feed complete context without file juggling
-**Version control** ⟜ track conceptual changes across files
-**Reversible** ⟜ perfect round-trip via unflatten
-
-## subcommands
-
-**flatten** ⟜ --input-dir DIR --output FILE
-**unflatten** ⟜ --input FILE --output-dir DIR
-
-## dependencies
-
-base, text, optparse-applicative, directory, filepath
-
 ## code
 
-```haskell top
+```haskell main
 {-# LANGUAGE OverloadedStrings #-}
 
 module Main where
@@ -45,7 +29,7 @@ import System.FilePath ((</>), takeExtension, takeFileName)
 import Control.Monad (filterM)
 ```
 
-```haskell
+```haskell main
 -- | Command line options
 data Command
   = Flatten
@@ -88,7 +72,7 @@ main = do
      <> header "flatten-md - reversible markdown concatenation" )
 ```
 
-```haskell
+```haskell main
 -- | Flatten a directory to a single file
 flattenDir :: FilePath -> FilePath -> IO ()
 flattenDir dir outFile = do
@@ -134,7 +118,7 @@ countLines path = do
   return $ length (T.lines content)
 ```
 
-```haskell
+```haskell main
 -- | Unflatten a concatenated file back to directory
 unflattenFile :: FilePath -> FilePath -> IO ()
 unflattenFile inFile outDir = do
@@ -231,71 +215,170 @@ stripDelimiters content =
   in T.unlines withoutLast
 ```
 
-## run
+## tests
 
-Installation via card-api.md:
+```haskell tick
+-- Simple test that always succeeds
+module Main where
+import System.Exit
 
-```bash
-card-api install ~/sisyphus/content/tools/flatten-md.md
+main :: IO ()
+main = do
+  putStrLn "tick: passed"
+  exitSuccess
 ```
 
-After installation:
+```haskell bench-flatten
+-- Benchmark flattening content/base/
+module Main where
+import Perf (tickIO)
+import System.Process (readProcessWithExitCode)
+import System.Exit (ExitCode(..), exitFailure)
+import System.Directory (removeFile, doesFileExist)
+import Control.Monad (when)
 
-```bash
-# Flatten files
-flatten-md flatten --input-dir ~/sisyphus/content/base/ --output /tmp/flat.md
-
-# Unflatten concatenated file
-flatten-md unflatten --input /tmp/flat.md --output-dir /tmp/restored/
+main :: IO ()
+main = do
+  -- Clean up any existing output
+  let outFile = "/tmp/flatten-bench.md"
+  exists <- doesFileExist outFile
+  when exists $ removeFile outFile
+  
+  -- Time the flatten operation
+  (nanos, (exitCode, _, stderr)) <- tickIO $
+    readProcessWithExitCode "flatten-md" 
+      ["flatten", "--input-dir", "content/base", "--output", outFile] ""
+  
+  case exitCode of
+    ExitSuccess -> do
+      let ms = fromIntegral nanos / 1e6 :: Double
+      putStrLn $ show ms ++ "ms"
+    ExitFailure _ -> do
+      putStrLn $ "✗ failed: " ++ stderr
+      exitFailure
 ```
 
-## examples
+```haskell bench-unflatten
+-- Benchmark unflattening
+module Main where
+import Perf (tickIO)
+import System.Process (readProcessWithExitCode)
+import System.Exit (ExitCode(..), exitFailure)
+import System.Directory (removeDirectoryRecursive, doesDirectoryExist)
+import Control.Monad (when)
 
-### flatten content/base/
-
-```bash
-flatten-md flatten --input-dir ~/sisyphus/content/base/ --output /tmp/base-flattened.md
+main :: IO ()
+main = do
+  -- Clean up any existing output
+  let outDir = "/tmp/unflatten-bench"
+  exists <- doesDirectoryExist outDir
+  when exists $ removeDirectoryRecursive outDir
+  
+  -- Time the unflatten operation
+  (nanos, (exitCode, _, stderr)) <- tickIO $
+    readProcessWithExitCode "flatten-md"
+      ["unflatten", "--input", "/tmp/flatten-bench.md", "--output-dir", outDir] ""
+  
+  case exitCode of
+    ExitSuccess -> do
+      let ms = fromIntegral nanos / 1e6 :: Double
+      putStrLn $ show ms ++ "ms"
+    ExitFailure _ -> do
+      putStrLn $ "✗ failed: " ++ stderr
+      exitFailure
 ```
 
-Result: /tmp/base-flattened.md contains all files with delimiters
+```haskell bench-perf
+-- Performance breakdown of flatten operation
+{-# LANGUAGE OverloadedStrings #-}
+module Main where
 
-### unflatten back to original structure
+import Prelude
+import Data.String
+import Perf
+import qualified Data.Text as T
+import qualified Data.Text.IO as TIO
+import System.Directory (listDirectory, doesDirectoryExist, getHomeDirectory, createDirectoryIfMissing)
+import System.FilePath (FilePath, (</>), takeExtension)
+import Control.Monad (filterM)
+import System.Clock (Clock(Monotonic))
+import qualified Data.Map.Strict as Map
+import Options.Applicative
 
-```bash
-# Unflatten concatenated file
-flatten-md unflatten --input /tmp/base-flattened.md --output-dir /tmp/base-restored/
+-- | Find all .md files recursively
+findMarkdownFiles :: FilePath -> IO [FilePath]
+findMarkdownFiles dir = do
+  entries <- listDirectory dir
+  let paths = map (dir </>) entries
+  
+  files <- filterM (\p -> return (takeExtension p == ".md")) paths
+  dirs <- filterM doesDirectoryExist paths
+  
+  subFiles <- concat <$> mapM findMarkdownFiles dirs
+  return (files ++ subFiles)
 
-# Verify round-trip
-diff -r ~/sisyphus/content/base/ /tmp/base-restored/
+-- | Read file and wrap with delimiters
+readWithDelimiter :: FilePath -> IO T.Text
+readWithDelimiter path = do
+  content <- TIO.readFile path
+  return $ addDelimiter path content
+
+-- | Add HTML comment delimiters
+addDelimiter :: FilePath -> T.Text -> T.Text
+addDelimiter path content =
+  "<!-- FILE: " <> T.pack path <> " -->\n" <> content <> "<!-- END FILE -->\n"
+
+-- | Performance-instrumented version of flattenDir
+flattenDirPerf :: (Semigroup t) => FilePath -> FilePath -> PerfT IO t ()
+flattenDirPerf dir outFile = do
+  -- Measure file finding
+  files <- fam "find-files" (findMarkdownFiles dir)
+  
+  -- Measure reading all files
+  contents <- fam "read-files" (mapM readWithDelimiter files)
+  
+  -- Measure pure concatenation
+  combined <- ffap "concat" T.concat contents
+  
+  -- Measure writing
+  fam "write-file" (TIO.writeFile outFile combined)
+
+main :: IO ()
+main = do
+  -- Parse report options from command line
+  reportOpts <- execParser (info (parseReportOptions defaultReportOptions <**> helper)
+    (fullDesc <> progDesc "Performance breakdown of flatten operation"))
+  
+  -- Set golden file path while preserving check/record flags from command line
+  let goldenPath = "artifacts/haskell-golden/flatten-md-bench-perf.golden"
+  createDirectoryIfMissing True "artifacts/haskell-golden"
+  let opts = reportOpts { reportGolden = (reportGolden reportOpts) { golden = goldenPath } }
+  
+  -- Run benchmark
+  home <- getHomeDirectory
+  m <- execPerfT (measureDs MeasureTime Monotonic 1) 
+         (flattenDirPerf (home ++ "/sisyphus/content/base") "/tmp/perf-flat.md")
+  
+  report opts (statify StatMedian m)
 ```
-
-Expected: no differences (perfect round-trip)
 
 ## status
 
-**Tests:** ✓ passed - 7 doctests passing
-**Benchmark:** - flatten-base: 17.81ms (median over 100 runs)
-- unflatten-base: 17.78ms (median over 100 runs)
+**Tests:**
+- doctests: not yet run
+- tick: not yet run
+- bench-flatten: not yet run
+- bench-unflatten: not yet run
+- bench-perf: ✓
+    label1          label2          old result      new result      change          
+    concat          time            3.00e3          3.00e3                          
+    find-files      time            1.92e5          1.50e4          improvement     
+    read-files      time            1.00e3          1.00e3                          
+    write-file      time            0.00e0          0.00e0                          
+    label1          label2          old result      new result      change          
+    concat          time            3.00e3          3.00e3                          
+    find-files      time            1.92e5          1.92e5                          
+    read-files      time            1.00e3          1.00e3                          
+    write-file      time            0.00e0          0.00e0                          
 
-Usage: flatten-md flatten --input-dir DIR --output FILE
-
-  Flatten directory to single file
-
-**Last updated:** 2025-12-31
-
-## upstream
-
-**Verbose flag** ⟜ gate putStrLn behind --verbose flag
-- Currently all output unconditional
-- Need to thread verbose flag through or use Writer monad
-
-**File ordering** ⟜ currently filesystem order
-- Simple and fast
-- Deterministic ordering deferred to content/upstream/metadata.md
-- Future: .file-importance.md for metadata-driven ordering
-
-## benchmarks
-
-**flatten-base** ⟜ flatten --input-dir content/base/ --output /tmp/flat.md
-**unflatten-base** ⟜ unflatten --input /tmp/flat.md --output-dir /tmp/out
-
+**Last updated:** 2025-01-01

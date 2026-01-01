@@ -1,46 +1,32 @@
 # card-api.md
-
-Universal processor for sisyphus/ cards - extracts, compiles, tests, and benchmarks literate tools.
-
+Universal processor for sisyphus/ cards - extracts, compiles, tests, and installs literate tools with multiple executables.
 ## what it does
-
 Processes cards in content/tools/ by:
-- Creating symlinks in artifacts/haskell-build/
-- Parsing dependencies from cards
-- Adding executable sections to haskell-build.cabal
-- Building executables via cabal + markdown-unlit
-- Running doctests and updating Status sections
-- Installing to artifacts/bin/
-
+- Creating symlinks for main executable in artifacts/haskell-build/
+- Extracting tagged fence blocks to separate executables
+- Building all executables via cabal + markdown-unlit
+- Running tests (doctests + all tagged executables) and updating Status sections
+- Installing all executables to artifacts/bin/
 ## why card-api
-
-**Single implementation** ⟜ all cards share the same operational logic
-**Consistent interface** ⟜ every tool gets install, uninstall, test, benchmark, docs
-**Dynamic cabal management** ⟜ adds/removes executables as cards are installed/uninstalled
-**Language agnostic** ⟜ extensible to Python, C++, shell cards
-
+**Single card, multiple programs** ⟜ main executable + tagged executables from any tagged blocks
+**Consistent interface** ⟜ every tool gets install, uninstall, test, docs
+**Flexible testing** ⟜ doctests + any executables, all treated uniformly
+**Inline metadata** ⟜ cards are self-contained with cabal dependencies
 ## subcommands
-
-**install** ⟜ symlink, add to cabal, build, and install card
-**uninstall** ⟜ remove symlink, remove from cabal, remove binary
-**test** ⟜ run doctests, update Status section
-**benchmark** ⟜ measure performance, update Status section
+**install** ⟜ extract, build, and install all executables from card
+**uninstall** ⟜ remove symlinks and all binaries
+**test** ⟜ run tests, update Status (all tests or --only specific)
 **docs** ⟜ display card documentation
-
 ## dependencies
-
 base, text, optparse-applicative, directory, filepath, process, perf
-
 ## code
-
-```haskell top
+```haskell main
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ScopedTypeVariables #-}
-
 module Main where
-
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
+import Data.Text.Encoding (encodeUtf8)
 import Options.Applicative
 import System.Directory
   ( createDirectoryIfMissing
@@ -51,18 +37,20 @@ import System.Directory
   , getCurrentDirectory
   , setCurrentDirectory
   , removeFile
+  , listDirectory
   )
 import System.FilePath
 import System.Process
 import System.Exit (ExitCode(..), exitWith)
-import Control.Monad (when, unless, replicateM)
+import Control.Monad (when, unless, forM_)
 import Control.Exception (catch, SomeException)
-import Data.List (isInfixOf, sort)
+import Data.List (isInfixOf, isPrefixOf, nub)
+import Data.Maybe (fromMaybe)
+import Text.Read (readMaybe)
 import Perf (tickIO)
 import Text.Printf (printf)
 ```
-
-```haskell
+```haskell main
 -- | Command line options
 data Command
   = Install
@@ -76,53 +64,48 @@ data Command
   | Test
       { testCardPath :: FilePath
       , testVerbose :: Bool
+      , testOnly :: Maybe String
       }
   | Benchmark
-      { benchmarkCardPath :: FilePath
-      , benchmarkIterations :: Int
-      , benchmarkVerbose :: Bool
-      , benchmarkArgs :: [String]
+      { benchCardPath :: FilePath
+      , benchName :: String
+      , benchArgs :: [String]  -- Pass-through args for perf options (-r, --stat, etc.)
+      , benchVerbose :: Bool
       }
   | Docs
       { docsCardPath :: FilePath
       }
-
 -- | Parse command line arguments
 parseCommand :: Parser Command
 parseCommand = subparser
   ( command "install" (info installParser (progDesc "Build and install card"))
   <> command "uninstall" (info uninstallParser (progDesc "Remove card and clean up"))
   <> command "test" (info testParser (progDesc "Run tests and update status"))
-  <> command "benchmark" (info benchmarkParser (progDesc "Measure performance"))
+  <> command "benchmark" (info benchmarkParser (progDesc "Run benchmark with perf options"))
   <> command "docs" (info docsParser (progDesc "Display documentation"))
   )
-
 installParser :: Parser Command
 installParser = Install
   <$> strArgument (metavar "CARD" <> help "Path to card markdown file")
   <*> switch (long "verbose" <> help "Show detailed output")
-
 uninstallParser :: Parser Command
 uninstallParser = Uninstall
   <$> strArgument (metavar "CARD" <> help "Path to card markdown file")
   <*> switch (long "verbose" <> help "Show detailed output")
-
 testParser :: Parser Command
 testParser = Test
   <$> strArgument (metavar "CARD" <> help "Path to card markdown file")
   <*> switch (long "verbose" <> help "Show detailed output")
-
+  <*> optional (strOption (long "only" <> help "Run only specific test"))
 benchmarkParser :: Parser Command
 benchmarkParser = Benchmark
   <$> strArgument (metavar "CARD" <> help "Path to card markdown file")
-  <*> option auto (long "iterations" <> short 'n' <> value 10 <> help "Number of benchmark iterations")
-  <*> switch (long "verbose" <> short 'v' <> help "Show detailed output")
-  <*> many (strArgument (metavar "ARGS..." <> help "Arguments to pass to executable"))
-
+  <*> strArgument (metavar "BENCHMARK" <> help "Benchmark name to run")
+  <*> many (strArgument (metavar "ARGS" <> help "Perf options (-r, --stat, etc.)"))
+  <*> switch (long "verbose" <> help "Show detailed output")
 docsParser :: Parser Command
 docsParser = Docs
   <$> strArgument (metavar "CARD" <> help "Path to card markdown file")
-
 -- | Main entry point
 main :: IO ()
 main = do
@@ -130,8 +113,9 @@ main = do
   case cmd of
     Install {installCardPath = card, installVerbose = v} -> installCard card v
     Uninstall {uninstallCardPath = card, uninstallVerbose = v} -> uninstallCard card v
-    Test {testCardPath = card, testVerbose = v} -> testCard card v
-    Benchmark {benchmarkCardPath = card, benchmarkIterations = n, benchmarkVerbose = v, benchmarkArgs = args} -> benchmarkCard card n v args
+    Test {testCardPath = card, testVerbose = v, testOnly = only} -> testCard card v only
+    Benchmark {benchCardPath = card, benchName = name, benchArgs = args, benchVerbose = v} -> 
+      benchmarkCard card name args v
     Docs {docsCardPath = card} -> showDocs card
   where
     opts = info (parseCommand <**> helper)
@@ -139,60 +123,85 @@ main = do
      <> progDesc "Universal processor for sisyphus cards"
      <> header "card-api - literate tool management" )
 ```
-
-```haskell
--- | Install a card: symlink, add to cabal, build, install to bin/
+```haskell main
+-- | Parse fence block tags from card to find tagged executables
+parseTaggedExecutables :: FilePath -> IO [String]
+parseTaggedExecutables cardPath = do
+  content <- TIO.readFile cardPath
+  return $ nub $ extractTags (T.lines content)
+  where
+    extractTags :: [T.Text] -> [String]
+    extractTags [] = []
+    extractTags (line:rest)
+      | "```haskell " `T.isPrefixOf` line =
+          let tag = T.unpack $ T.strip $ T.drop 11 line
+          in if tag /= ""
+             then tag : extractTags rest
+             else extractTags rest
+      | otherwise = extractTags rest
+-- | Install a card: extract all executables, build, install
 installCard :: FilePath -> Bool -> IO ()
 installCard cardPath verboseMode = do
   when verboseMode $ showDocs cardPath
-  
   let buildDir = "artifacts/haskell-build"
   let cardName = takeBaseName cardPath
-  let lhsName = cardName <.> "lhs"
-  let lhsPath = buildDir </> lhsName
-  
   createDirectoryIfMissing True buildDir
-  
+  createDirectoryIfMissing True "artifacts/bin"
   absoluteCardPath <- makeAbsolute cardPath
   let relativePath = makeRelative buildDir absoluteCardPath
-  
-  symlinkExists <- pathIsSymbolicLink lhsPath `catch` \(_ :: SomeException) -> return False
-  unless symlinkExists $ do
-    when verboseMode $ putStrLn $ "Creating symlink: " ++ lhsPath
-    createFileLink relativePath lhsPath
-  
-  ensureCabalProject buildDir verboseMode
-  
-  deps <- parseDependencies cardPath
-  when verboseMode $ putStrLn $ "Dependencies: " ++ deps
-  
-  addExecutableToCabal buildDir cardName deps verboseMode
-  
-  when verboseMode $ putStrLn "Building with cabal..."
+  -- Find ALL tagged executables (including main)
+  taggedExecs <- parseTaggedExecutables cardPath
+  when verboseMode $ putStrLn $ "Found tagged executables: " ++ show taggedExecs
+  -- Extract all executables using markdown-unlit
   currentDir <- getCurrentDirectory
   setCurrentDirectory buildDir
-  (exitCode, stdout, stderr) <- readProcessWithExitCode "cabal" ["build", "all"] ""
-  
+  forM_ taggedExecs $ \tag -> do
+    let fileName = if tag == "main"
+                   then cardName <.> "hs"
+                   else cardName ++ "-" ++ tag <.> "hs"
+    when verboseMode $ putStrLn $ "Extracting " ++ tag ++ " to " ++ fileName
+    (exitCode, stdout, stderr) <- readProcessWithExitCode "markdown-unlit"
+      [tag, "-h", relativePath, relativePath, fileName] ""
+    case exitCode of
+      ExitSuccess -> return ()  -- File already written by markdown-unlit
+      ExitFailure _ -> do
+        putStrLn $ "Failed to extract " ++ tag ++ ": " ++ stderr
+        setCurrentDirectory currentDir
+        exitWith (ExitFailure 1)
+  -- Regenerate cabal file from directory contents
+  when verboseMode $ putStrLn "Regenerating cabal file..."
+  (cabalGenCode, cabalStdout, cabalStderr) <- readProcessWithExitCode "discover-executables" [] ""
+  when verboseMode $ putStrLn cabalStdout
+  case cabalGenCode of
+    ExitFailure code -> do
+      setCurrentDirectory currentDir
+      putStrLn "Failed to regenerate cabal file"
+      putStrLn cabalStderr
+      exitWith (ExitFailure code)
+    ExitSuccess -> return ()
+  -- Build only this card's executables
+  let tagToExec tag = if tag == "main" then cardName else cardName ++ "-" ++ tag
+  let cardExecs = map tagToExec taggedExecs
+  when verboseMode $ putStrLn $ "Building executables: " ++ unwords cardExecs
+  (exitCode, stdout, stderr) <- readProcessWithExitCode "cabal"
+    (["build"] ++ cardExecs) ""
   when verboseMode $ do
     putStrLn stdout
     unless (null stderr) $ putStrLn stderr
-  
   case exitCode of
     ExitSuccess -> do
       when verboseMode $ putStrLn "Installing to artifacts/bin/..."
-      
-      -- Use cabal install (still in buildDir)
-      (installExitCode, installStdout, installStderr) <- readProcessWithExitCode "cabal" 
-        ["install", cardName, "--installdir=../bin", "--overwrite-policy=always"] ""
-      
+      -- Install only this card's executables
+      (installExitCode, installStdout, installStderr) <- readProcessWithExitCode "cabal"
+        (["install"] ++ cardExecs ++ ["--installdir=../bin", "--overwrite-policy=always"]) ""
       setCurrentDirectory currentDir
-      
       when verboseMode $ do
         putStrLn installStdout
         unless (null installStderr) $ putStrLn installStderr
-      
       case installExitCode of
-        ExitSuccess -> putStrLn $ "Installed: artifacts/bin/" ++ cardName
+        ExitSuccess -> do
+          forM_ cardExecs $ \execName ->
+            putStrLn $ "Installed: artifacts/bin/" ++ execName
         ExitFailure code -> do
           putStrLn $ "Install failed with exit code: " ++ show code
           putStrLn installStderr
@@ -202,204 +211,101 @@ installCard cardPath verboseMode = do
       putStrLn stderr
       setCurrentDirectory currentDir
       exitWith (ExitFailure code)
-
--- | Uninstall a card: remove symlink, remove from cabal, remove binary
+-- | Uninstall a card: remove extracted files and binaries
 uninstallCard :: FilePath -> Bool -> IO ()
 uninstallCard cardPath verboseMode = do
   let buildDir = "artifacts/haskell-build"
   let cardName = takeBaseName cardPath
-  let lhsPath = buildDir </> cardName <.> "lhs"
-  let binPath = "artifacts/bin" </> cardName
   
-  when verboseMode $ putStrLn $ "Removing symlink: " ++ lhsPath
-  symlinkExists <- pathIsSymbolicLink lhsPath `catch` \(_ :: SomeException) -> return False
-  when symlinkExists $ removeFile lhsPath
+  -- Find all tagged executables
+  taggedExecs <- parseTaggedExecutables cardPath
   
-  when verboseMode $ putStrLn "Removing from cabal file..."
-  removeExecutableFromCabal buildDir cardName verboseMode
+  -- Remove all extracted files and binaries
+  forM_ taggedExecs $ \tag -> do
+    let fileName = if tag == "main"
+                   then buildDir </> cardName <.> "hs"
+                   else buildDir </> cardName ++ "-" ++ tag <.> "hs"
+    let binName = if tag == "main"
+                  then "artifacts/bin" </> cardName
+                  else "artifacts/bin" </> cardName ++ "-" ++ tag
+    
+    when verboseMode $ putStrLn $ "Removing: " ++ fileName
+    fileExists <- doesFileExist fileName
+    when fileExists $ removeFile fileName
+    
+    when verboseMode $ putStrLn $ "Removing: " ++ binName
+    binExists <- doesFileExist binName
+    when binExists $ removeFile binName
   
-  when verboseMode $ putStrLn $ "Removing binary: " ++ binPath
-  binExists <- doesFileExist binPath
-  when binExists $ removeFile binPath
+  -- Regenerate cabal file from remaining files
+  when verboseMode $ putStrLn "Regenerating cabal file..."
+  currentDir <- getCurrentDirectory
+  setCurrentDirectory buildDir
+  (cabalGenCode, cabalStdout, cabalStderr) <- readProcessWithExitCode "discover-executables" [] ""
+  setCurrentDirectory currentDir
+  
+  when verboseMode $ putStrLn cabalStdout
+  
+  case cabalGenCode of
+    ExitFailure code -> do
+      putStrLn "Warning: Failed to regenerate cabal file"
+      putStrLn cabalStderr
+    ExitSuccess -> return ()
+  
+  -- Reset Status section
+  when verboseMode $ putStrLn "Resetting Status section..."
+  content <- TIO.readFile cardPath
+  let resetContent = resetStatusSection content
+  TIO.writeFile cardPath resetContent
   
   putStrLn $ "Uninstalled: " ++ cardName
-
--- | Parse dependencies from card's ## dependencies section
-parseDependencies :: FilePath -> IO String
-parseDependencies cardPath = do
-  content <- TIO.readFile cardPath
-  let depLine = findDependencies (T.lines content)
-  return $ maybe "base" T.unpack depLine
+-- | Reset Status section to "not yet run"
+resetStatusSection :: T.Text -> T.Text
+resetStatusSection content =
+  let contentLines = T.lines content
+      inStatus = scanl checkStatus False contentLines
+      resetLines = zipWith resetIfTestResult inStatus contentLines
+      filtered = filter (not . T.null) resetLines
+  in T.unlines filtered
   where
-    findDependencies [] = Nothing
-    findDependencies (line:rest)
-      | "## dependencies" `T.isPrefixOf` line = 
-          case dropWhile T.null rest of  -- Skip empty lines
-            (nextLine:_) | not (T.isPrefixOf "##" nextLine) -> Just (T.strip nextLine)
-            _ -> Nothing
-      | otherwise = findDependencies rest
-
--- | Parse benchmark scenarios from card's ## benchmarks section
--- Returns list of (name, args)
-parseBenchmarks :: FilePath -> IO [(String, [String])]
-parseBenchmarks cardPath = do
-  content <- TIO.readFile cardPath
-  return $ findBenchmarks (T.lines content)
-  where
-    findBenchmarks [] = []
-    findBenchmarks (line:rest)
-      | "## benchmarks" `T.isPrefixOf` line = parseBenchmarkLines rest
-      | otherwise = findBenchmarks rest
+    checkStatus wasInStatus line
+      | "## status" `T.isPrefixOf` T.toLower line = True
+      | "##" `T.isPrefixOf` line = False
+      | otherwise = wasInStatus
     
-    parseBenchmarkLines [] = []
-    parseBenchmarkLines (line:rest)
-      | "##" `T.isPrefixOf` line = []  -- Hit next section
-      | "**" `T.isPrefixOf` line = 
-          case parseBenchmarkLine line of
-            Just benchmark -> benchmark : parseBenchmarkLines rest
-            Nothing -> parseBenchmarkLines rest
-      | otherwise = parseBenchmarkLines rest
-    
-    parseBenchmarkLine line =
-      let stripped = T.strip line
-          -- Pattern: **name** ⟜ args or **name**: args
-          withoutStars = T.dropWhile (== '*') stripped
-          nameAndRest = T.breakOn "**" withoutStars
-      in case nameAndRest of
-        (name, rest) | not (T.null rest) ->
-          let afterName = T.drop 2 rest  -- Drop the closing **
-              argsText = T.strip $ T.dropWhile (\c -> c == '⟜' || c == ':' || c == ' ') afterName
-              args = map T.unpack $ T.words argsText
-          in if T.null name then Nothing else Just (T.unpack (T.strip name), args)
-        _ -> Nothing
-
--- | Add executable section to cabal file
-addExecutableToCabal :: FilePath -> String -> String -> Bool -> IO ()
-addExecutableToCabal buildDir name deps verboseMode = do
-  let cabalFile = buildDir </> "haskell-build.cabal"
-  content <- readFile cabalFile
-  
-  -- Ensure base is included
-  let allDeps = if "base" `isInfixOf` deps 
-                then deps 
-                else "base, " ++ deps
-  
-  let execSection = unlines
-        [ ""
-        , "executable " ++ name
-        , "  import: deps"
-        , "  main-is: " ++ name ++ ".lhs"
-        , "  build-depends: " ++ allDeps
-        ]
-  
-  if ("executable " ++ name) `isInfixOf` content
-    then when verboseMode $ putStrLn $ "Executable " ++ name ++ " already in cabal file"
-    else do
-      when verboseMode $ putStrLn $ "Adding executable " ++ name ++ " to cabal file"
-      writeFile cabalFile (content ++ execSection)
-
--- | Remove executable section from cabal file
-removeExecutableFromCabal :: FilePath -> String -> Bool -> IO ()
-removeExecutableFromCabal buildDir name verboseMode = do
-  let cabalFile = buildDir </> "haskell-build.cabal"
-  content <- readFile cabalFile
-  let contentLines = lines content
-  let filtered = removeExecutableSection name contentLines
-  writeFile cabalFile (unlines filtered)
-  when verboseMode $ putStrLn $ "Removed executable " ++ name ++ " from cabal file"
-
--- | Remove executable section from cabal file lines
-removeExecutableSection :: String -> [String] -> [String]
-removeExecutableSection name = go False
-  where
-    execMarker = "executable " ++ name
-    go _ [] = []
-    go True (line:rest)
-      | null (dropWhile (== ' ') line) = go False rest
-      | otherwise = case dropWhile (== ' ') line of
-          (c:_) | c /= ' ' -> go False (line:rest)
-          _ -> go True rest
-    go False (line:rest)
-      | execMarker `isInfixOf` line = go True rest
-      | otherwise = line : go False rest
-
--- | Ensure cabal project exists in build directory
-ensureCabalProject :: FilePath -> Bool -> IO ()
-ensureCabalProject buildDir verboseMode = do
-  let cabalFile = buildDir </> "haskell-build.cabal"
-  exists <- doesFileExist cabalFile
-  unless exists $ do
-    when verboseMode $ putStrLn "Warning: haskell-build.cabal not found. Run haskell-build-bootstrap.md first"
-    putStrLn "Error: No cabal project found. Run haskell-build-bootstrap.md"
-    exitWith (ExitFailure 1)
-
--- | Run an executable and time it with tickIO
--- tickIO returns nanoseconds, we convert to seconds
-timeExecution :: FilePath -> [String] -> IO (Either String Double)
-timeExecution executable args = do
-  exists <- doesFileExist executable
-  if not exists
-    then return $ Left $ "Executable not found: " ++ executable
-    else do
-      (t, (exitCode, _, stderr)) <- tickIO $ 
-        readProcessWithExitCode executable args ""
-      
-      case exitCode of
-        ExitSuccess -> return $ Right (fromIntegral t * 1e-9)
-        ExitFailure code -> return $ Left $ 
-          "Execution failed (code " ++ show code ++ "): " ++ stderr
-
--- | Run benchmark N times and collect timings
-runBenchmarkN :: FilePath -> [String] -> Int -> IO (Either String [Double])
-runBenchmarkN executable args n = do
-  results <- replicateM n (timeExecution executable args)
-  let (errs, times) = partitionEithers results
-  if null errs
-    then return $ Right times
-    else return $ Left $ head errs
-  where
-    partitionEithers = foldr (either left right) ([], [])
-    left a (ls, rs) = (a:ls, rs)
-    right b (ls, rs) = (ls, b:rs)
-
--- | Calculate statistics from timing data (all in seconds)
-data Stats = Stats
-  { statMedian :: Double
-  , statMean :: Double
-  , statMin :: Double
-  , statMax :: Double
-  }
-
-calcStats :: [Double] -> Stats
-calcStats xs = Stats
-  { statMedian = sorted !! (length sorted `div` 2)
-  , statMean = sum xs / fromIntegral (length xs)
-  , statMin = minimum xs
-  , statMax = maximum xs
-  }
-  where
-    sorted = sort xs
-
--- | Format timing as human-readable string (input in seconds)
+    resetIfTestResult inStatusSection line
+      | inStatusSection && "**Tests:**" `T.isPrefixOf` line = "**Tests:** not yet run"
+      | inStatusSection && "- " `T.isPrefixOf` T.stripStart line = ""  -- Remove test results
+      | otherwise = line
+```
+```haskell main
+-- | Test result
+data TestResult
+  = TestPassed String     -- Single line success
+  | TestFailed String     -- Single line error
+  | TestTimed Double      -- Timing in seconds
+  | TestMultiLine [String] -- Multi-line output (e.g. perf reports)
+-- | Format test result for Status section
+formatTestResult :: TestResult -> T.Text
+formatTestResult (TestPassed msg) = T.pack $ "✓ " ++ msg
+formatTestResult (TestFailed msg) = T.pack $ "✗ " ++ msg
+formatTestResult (TestTimed t) = T.pack $ formatTiming t
+formatTestResult (TestMultiLine outputLines) = 
+  -- Format as: "✓\n    line1\n    line2..."
+  T.pack $ "✓\n" ++ unlines (map ("    " ++) outputLines)
+-- | Format timing in appropriate units
 formatTiming :: Double -> String
 formatTiming seconds
-  | seconds < 0.001 = printf "%.1fµs" (seconds * 1e6)
+  | seconds < 0.001 = printf "%.2fμs" (seconds * 1e6)
   | seconds < 1.0   = printf "%.2fms" (seconds * 1e3)
   | otherwise       = printf "%.2fs" seconds
-
--- | Format stats for Status section
-formatStats :: Stats -> Int -> T.Text
-formatStats stats n = T.pack $
-  formatTiming (statMedian stats) ++ 
-  " (median over " ++ show n ++ " runs)"
-
--- | Run doctests and update status
-testCard :: FilePath -> Bool -> IO ()
-testCard cardPath verboseMode = do
-  when verboseMode $ putStrLn "Running doctests..."
-  
-  let buildDir = "artifacts/haskell-build"
+-- | Run doctests for a card
+runDoctests :: FilePath -> Bool -> IO TestResult
+runDoctests cardPath verboseMode = do
   let cardName = takeBaseName cardPath
+  let buildDir = "artifacts/haskell-build"
+  
+  when verboseMode $ putStrLn $ "Running doctests for " ++ cardName ++ "..."
   
   currentDir <- getCurrentDirectory
   setCurrentDirectory buildDir
@@ -411,275 +317,321 @@ testCard cardPath verboseMode = do
   
   when verboseMode $ do
     putStrLn stdout
-    putStrLn stderr
+    unless (null stderr) $ putStrLn stderr
   
-  let status = case exitCode of
-        ExitSuccess -> "✓ passed"
-        ExitFailure _ -> "✗ failed"
-  
-  updateStatus cardPath "Tests" status
-  
-  case exitCode of
-    ExitSuccess -> putStrLn "Tests passed"
-    ExitFailure code -> do
-      putStrLn "Tests failed"
-      putStrLn stderr
-      exitWith (ExitFailure code)
-
--- | Run benchmarks and update status
-benchmarkCard :: FilePath -> Int -> Bool -> [String] -> IO ()
-benchmarkCard cardPath iterations verboseMode args = do
-  when verboseMode $ putStrLn "Running benchmarks..."
-  
+  return $ case exitCode of
+    ExitSuccess -> 
+      let exampleCount = countExamples stderr  -- doctest outputs to stderr
+      in if exampleCount > 0
+         then TestPassed $ show exampleCount ++ " doctests passing"
+         else TestPassed "no doctests found"
+    ExitFailure _ ->
+      TestFailed $ takeWhile (/= '\n') stderr
+-- | Count examples from doctest output
+-- Parses "Examples: 9  Tried: 9  Errors: 0  Failures: 0"
+countExamples :: String -> Int
+countExamples output =
+  case filter ("Examples:" `isInfixOf`) (lines output) of
+    (line:_) -> 
+      let ws = words line
+      in case dropWhile (/= "Examples:") ws of
+           (_:numStr:_) -> read numStr
+           _ -> 0
+    [] -> 0
+-- | Run a test executable
+runTestExecutable :: FilePath -> String -> Bool -> IO TestResult
+runTestExecutable cardPath testName verboseMode = do
   let cardName = takeBaseName cardPath
-  let executable = "artifacts/bin" </> cardName
+  let executable = "artifacts/bin" </> cardName ++ "-" ++ testName
   
-  if null args
-    then do
-      -- No args provided - run benchmark suite from card
-      benchmarks <- parseBenchmarks cardPath
-      if null benchmarks
-        then do
-          putStrLn "No benchmark suite found in card and no args provided"
-          putStrLn "Either:"
-          putStrLn "  1. Add a ## benchmarks section to the card, or"
-          putStrLn "  2. Pass args: card-api benchmark CARD -- <args>"
-          exitWith (ExitFailure 1)
-        else do
-          when verboseMode $ putStrLn $ "Found " ++ show (length benchmarks) ++ " benchmark scenarios"
-          results <- mapM (runNamedBenchmark executable iterations verboseMode) benchmarks
-          let formatted = formatBenchmarkSuite results iterations
-          updateStatus cardPath "Benchmark" formatted
-          putStrLn "Benchmark suite complete"
+  execExists <- doesFileExist executable
+  if not execExists
+    then return $ TestFailed "executable not found (run install first)"
     else do
-      -- Args provided - run single ad-hoc benchmark
+      when verboseMode $ putStrLn $ "Running " ++ testName ++ "..."
+      
+      -- Run with timing (tickIO returns Nanos = Integer nanoseconds)
+      (nanos, (exitCode, stdout, stderr)) <- tickIO $ readProcessWithExitCode executable [] ""
+      let seconds = fromIntegral nanos / 1e9  -- Convert nanos to seconds
+      
       when verboseMode $ do
+        putStrLn stdout
+        unless (null stderr) $ putStrLn stderr
+      
+      return $ case exitCode of
+        ExitSuccess -> 
+          let outputLines = filter (not . null) (lines stdout)
+          in case outputLines of
+               [] -> TestTimed seconds  -- No output, just show timing
+               [singleLine] -> TestPassed singleLine  -- Single line output
+               multiLines -> TestMultiLine multiLines  -- Multi-line output (e.g. perf report)
+        ExitFailure _ ->
+          TestFailed $ takeWhile (/= '\n') stderr
+-- | Run and update a single test
+runAndUpdateTest :: FilePath -> String -> Bool -> IO ()
+runAndUpdateTest cardPath testName verboseMode = do
+  result <- if testName == "doctests"
+            then runDoctests cardPath verboseMode
+            else runTestExecutable cardPath testName verboseMode
+  
+  let formatted = formatTestResult result
+  updateStatusLine cardPath testName formatted
+  
+  putStrLn $ testName ++ ": " ++ T.unpack formatted
+-- | Test a card
+testCard :: FilePath -> Bool -> Maybe String -> IO ()
+testCard cardPath verboseMode onlyTest = do
+  case onlyTest of
+    Just testName -> do
+      -- Run specific test only
+      runAndUpdateTest cardPath testName verboseMode
+    
+    Nothing -> do
+      -- Run all tests
+      taggedExecs <- parseTaggedExecutables cardPath
+      let testTags = filter (\t -> t /= "main" && t /= "noop") taggedExecs
+      let allTests = "doctests" : testTags
+      
+      when verboseMode $ putStrLn $ "Running " ++ show (length allTests) ++ " tests..."
+      
+      forM_ allTests $ \testName ->
+        runAndUpdateTest cardPath testName verboseMode
+      
+      putStrLn "All tests complete"
+-- | Run a benchmark with perf options
+benchmarkCard :: FilePath -> String -> [String] -> Bool -> IO ()
+benchmarkCard cardPath benchName args verboseMode = do
+  let cardName = takeBaseName cardPath
+  let executable = "artifacts/bin" </> cardName ++ "-" ++ benchName
+  
+  execExists <- doesFileExist executable
+  if not execExists
+    then do
+      putStrLn $ "Benchmark not found: " ++ benchName
+      putStrLn $ "Run: card-api install " ++ cardPath
+      exitWith (ExitFailure 1)
+    else do
+      when verboseMode $ do
+        putStrLn $ "Running benchmark: " ++ benchName
         putStrLn $ "Executable: " ++ executable
         putStrLn $ "Args: " ++ unwords args
       
-      result <- runBenchmarkN executable args iterations
+      -- Run benchmark with args
+      (exitCode, stdout, stderr) <- readProcessWithExitCode executable args ""
       
-      case result of
-        Left err -> do
-          putStrLn $ "Benchmark failed: " ++ err
-          updateStatus cardPath "Benchmark" (T.pack $ "✗ " ++ err)
-        Right times -> do
-          let stats = calcStats times
-          let formatted = formatStats stats iterations
+      -- Always show output (benchmarks are meant to be viewed)
+      putStrLn stdout
+      unless (null stderr) $ putStrLn stderr
+      
+      case exitCode of
+        ExitSuccess -> do
+          -- Update Status with multi-line output
+          let outputLines = filter (not . null) (lines stdout)
+          let result = case outputLines of
+                [] -> T.pack "✓ completed"
+                [single] -> T.pack $ "✓ " ++ single
+                multi -> T.pack $ "✓\n" ++ unlines (map ("    " ++) multi)
           
-          when verboseMode $ do
-            putStrLn $ "Min:    " ++ formatTiming (statMin stats)
-            putStrLn $ "Median: " ++ formatTiming (statMedian stats)
-            putStrLn $ "Mean:   " ++ formatTiming (statMean stats)
-            putStrLn $ "Max:    " ++ formatTiming (statMax stats)
+          content <- TIO.readFile cardPath
+          let updated = replaceOrAddStatusLine content benchName result
+          TIO.writeFile cardPath updated
           
-          putStrLn $ "Benchmark: " ++ T.unpack formatted
-          updateStatus cardPath "Benchmark" formatted
-
--- | Run a named benchmark scenario
-runNamedBenchmark :: FilePath -> Int -> Bool -> (String, [String]) -> IO (String, Either String Stats)
-runNamedBenchmark executable iterations verboseMode (name, args) = do
-  when verboseMode $ putStrLn $ "\nRunning: " ++ name
-  when verboseMode $ putStrLn $ "  Args: " ++ unwords args
-  
-  result <- runBenchmarkN executable args iterations
-  
-  case result of
-    Left err -> do
-      when verboseMode $ putStrLn $ "  Failed: " ++ err
-      return (name, Left err)
-    Right times -> do
-      let stats = calcStats times
-      when verboseMode $ do
-        putStrLn $ "  Min:    " ++ formatTiming (statMin stats)
-        putStrLn $ "  Median: " ++ formatTiming (statMedian stats)
-        putStrLn $ "  Mean:   " ++ formatTiming (statMean stats)
-        putStrLn $ "  Max:    " ++ formatTiming (statMax stats)
-      return (name, Right stats)
-
--- | Format benchmark suite results for Status section
-formatBenchmarkSuite :: [(String, Either String Stats)] -> Int -> T.Text
-formatBenchmarkSuite results iterations =
-  let lines = map formatResult results
-  in T.intercalate "\n" lines
-  where
-    formatResult (name, Left err) = T.pack $ "- " ++ name ++ ": ✗ " ++ err
-    formatResult (name, Right stats) = 
-      T.pack $ "- " ++ name ++ ": " ++ formatTiming (statMedian stats) ++ 
-               " (median over " ++ show iterations ++ " runs)"
-
+          when verboseMode $ putStrLn $ "Updated Status for: " ++ benchName
+        
+        ExitFailure code -> do
+          putStrLn $ "Benchmark failed with exit code: " ++ show code
+          exitWith (ExitFailure code)
 -- | Display card documentation
 showDocs :: FilePath -> IO ()
 showDocs cardPath = do
   content <- readFile cardPath
   putStrLn content
-
--- | Update Status section in card
-updateStatus :: FilePath -> T.Text -> T.Text -> IO ()
-updateStatus cardPath field val = do
+-- | Update a single line in Status section
+updateStatusLine :: FilePath -> String -> T.Text -> IO ()
+updateStatusLine cardPath testName result = do
   content <- TIO.readFile cardPath
-  let updated = replaceStatusField content field val
+  let updated = replaceOrAddStatusLine content testName result
   TIO.writeFile cardPath updated
-
--- | Replace a field in the Status section
--- Handles both single-line and multi-line values
-replaceStatusField :: T.Text -> T.Text -> T.Text -> T.Text
-replaceStatusField content field val =
-  let fieldPattern = "**" <> field <> ":**"
-      newValue = if "\n" `T.isPrefixOf` val
-                 then fieldPattern <> val  -- Multi-line: starts with newline
-                 else fieldPattern <> " " <> val  -- Single-line: add space
+-- | Replace or add a status line in the Tests section
+replaceOrAddStatusLine :: T.Text -> String -> T.Text -> T.Text
+replaceOrAddStatusLine content testName result =
+  let linePattern = "- " <> T.pack testName <> ":"
+      -- If result contains newlines, split into multiple lines
+      resultLines = T.lines result
+      newLines = case resultLines of
+        [single] -> [linePattern <> " " <> single]  -- Single line
+        (first:rest) -> (linePattern <> " " <> first) : rest  -- Multi-line
+        [] -> [linePattern <> " ✓"]  -- Shouldn't happen
       contentLines = T.lines content
-      updated = replaceFieldLines fieldPattern newValue contentLines
+      updated = replaceInTests linePattern newLines contentLines
   in T.unlines updated
   where
-    replaceFieldLines :: T.Text -> T.Text -> [T.Text] -> [T.Text]
-    replaceFieldLines pattern new [] = []
-    replaceFieldLines pattern new (line:rest)
-      | pattern `T.isPrefixOf` line =
-          -- Found the field, replace it and skip old multi-line content
-          let newLines = T.lines new
-              restAfter = dropWhile isFieldContinuation rest
-          in newLines ++ replaceFieldLines pattern new restAfter
-      | otherwise = line : replaceFieldLines pattern new rest
+    replaceInTests :: T.Text -> [T.Text] -> [T.Text] -> [T.Text]
+    replaceInTests pattern newLines [] = []
+    replaceInTests pattern newLines (line:rest)
+      -- Found Tests section header
+      | "**Tests:**" `T.isPrefixOf` line =
+          let (testsLines, afterTests) = span isTestLine rest
+              updatedTests = replaceOrAppendLines pattern newLines testsLines
+          in line : updatedTests ++ replaceInTests pattern newLines afterTests
+      | otherwise = line : replaceInTests pattern newLines rest
     
-    -- A line is part of the field if it starts with "- " (list item)
-    isFieldContinuation :: T.Text -> Bool
-    isFieldContinuation line =
+    replaceOrAppendLines :: T.Text -> [T.Text] -> [T.Text] -> [T.Text]
+    replaceOrAppendLines pattern newLines [] = newLines  -- Add if not found
+    replaceOrAppendLines pattern newLines (line:rest)
+      | pattern `T.isPrefixOf` T.stripStart line = 
+          -- Found the test line - remove it and any indented continuation lines
+          let restWithoutContinuation = dropWhile isContinuationLine rest
+          in newLines ++ restWithoutContinuation
+      | otherwise = line : replaceOrAppendLines pattern newLines rest
+    
+    -- Check if a line is a continuation (indented more than test lines)
+    isContinuationLine :: T.Text -> Bool
+    isContinuationLine line =
+      let stripped = T.stripStart line
+          spaces = T.length line - T.length stripped
+      in spaces > 2 && not (T.null stripped)  -- Indented >2 spaces and non-empty
+    
+    isTestLine :: T.Text -> Bool
+    isTestLine line =
       let trimmed = T.stripStart line
-      in "- " `T.isPrefixOf` trimmed && not ("**" `T.isPrefixOf` trimmed)
+      in ("- " `T.isPrefixOf` trimmed && not ("**" `T.isPrefixOf` trimmed)) ||
+         T.null trimmed
 ```
-
-```haskell
-{- cabal: 
-build-depends: base, text, optparse-applicative, directory, filepath, process, perf
-default-language: Haskell2010
-build-tool-depends: markdown-unlit:markdown-unlit
-ghc-options: -pgmL markdown-unlit -Wall
--}
+```haskell noop
+-- Do-nothing executable for measuring syscall overhead
+module Main where
+main :: IO ()
+main = return ()
 ```
-
+```haskell bench-syscall
+-- Benchmark system call overhead by calling noop executable
+module Main where
+import Perf (tickIO)
+import System.Process (readProcessWithExitCode)
+import System.Exit (ExitCode(..), exitFailure)
+main :: IO ()
+main = do
+  (nanos, (exitCode, _, stderr)) <- tickIO $
+    readProcessWithExitCode "card-api-noop" [] ""
+  
+  case exitCode of
+    ExitSuccess -> do
+      let ms = fromIntegral nanos / 1e6 :: Double
+      putStrLn $ show ms ++ "ms"
+    ExitFailure _ -> do
+      putStrLn $ "✗ failed: " ++ stderr
+      exitFailure
+```
 ## run
-
 Prerequisites:
 ```bash
-# Run haskell-build-bootstrap.md once
-cd ~/sisyphus
-# Extract and run from the markdown file (see haskell-build-bootstrap.md)
+# Ensure cabal and markdown-unlit are available
+cabal install markdown-unlit
 ```
-
-Then use card-api:
-
+Bootstrap card-api:
 ```bash
-# Install a card
+mkdir -p ~/sisyphus/artifacts/haskell-build
+cd ~/sisyphus/artifacts/haskell-build
+# Create symlink
+ln -s ../../content/tools/card-api.md card-api.lhs
+# Create minimal cabal project
+cat > cabal.project << 'EOF'
+packages: .
+EOF
+cat > haskell-build.cabal << 'EOF'
+cabal-version: 2.4
+name: haskell-build
+version: 0
+build-type: Simple
+executable card-api
+  main-is: card-api.lhs
+  build-depends: base, text, optparse-applicative, directory, filepath, process, perf
+  build-tool-depends: markdown-unlit:markdown-unlit
+  ghc-options: -pgmL markdown-unlit -Wall
+  default-language: Haskell2010
+EOF
+# Build and install
+cabal install --installdir=../bin --overwrite-policy=always
+```
+Use card-api:
+```bash
+# Install a card (installs main + all tagged executables)
 card-api install ~/sisyphus/content/tools/flatten-md.md
-
-# Test a card
+# Run all tests
 card-api test ~/sisyphus/content/tools/flatten-md.md
-
-# Benchmark a card (runs suite from card's ## benchmarks section)
-card-api benchmark ~/sisyphus/content/tools/flatten-md.md --iterations 100 --verbose
-
-# Or ad-hoc benchmark with custom args (use -- separator)
-card-api benchmark ~/sisyphus/content/tools/flatten-md.md --iterations 10 --verbose -- flatten input.txt output.md
-
-# Uninstall a card
+# Run specific test only
+card-api test ~/sisyphus/content/tools/flatten-md.md --only roundtrip
+# Run benchmark (no args)
+card-api benchmark ~/sisyphus/content/tools/flatten-md.md bench-perf
+# Run benchmark with perf options (note: use -- to separate args)
+card-api benchmark ~/sisyphus/content/tools/flatten-md.md bench-perf -- -r
+card-api benchmark ~/sisyphus/content/tools/flatten-md.md bench-perf -- --stat mean
+# Uninstall card
 card-api uninstall ~/sisyphus/content/tools/flatten-md.md
 ```
+## card structure
+Cards support multiple executables via fence block tags.
+**All code blocks must be tagged** - the tag determines the executable name.
+Example card structure (see flatten-md.md for complete example):
+- `haskell main` blocks → main executable
+- Other `haskell <tag>` blocks → test/benchmark executables
+- Tag name becomes part of executable name: `cardname-tag`
+**Tag mapping:**
+- `main` tag → `cardname` executable → `cardname.hs` file
+- Other tags → `cardname-tag` executable → `cardname-tag.hs` file
+## status section
+Updated with all test results:
+```markdown
+**Installation Cost:**
+  - Tokens: unknown
+  - Cache: 0 read, 0 created
+  - Time: 7s
+  - Model: claude-haiku-4-5-20251001
+  - Installed: 2026-01-01 06:02 UTC
+**Installation Cost:**
+  - Tokens: unknown
+  - Cache: 0 read, 0 created
+  - Time: 7s
+  - Model: claude-haiku-4-5-20251001
+  - Installed: 2026-01-01 06:02 UTC
+**Installation Cost:**
+  - Tokens: unknown
+  - Cache: 0 read, 0 created
+  - Time: 7s
+  - Model: claude-haiku-4-5-20251001
+  - Installed: 2026-01-01 06:02 UTC
 
+**Tests:** not yet run
+```
 ## examples
-
-### install a card
-
+See flatten-md.md for a complete working example with:
+- Main executable (`main` tag)
+- Test executable (`tick` tag)
+- Benchmark executables (`bench-flatten`, `bench-unflatten` tags)
+- Doctests in the main code
 ```bash
-card-api install ~/sisyphus/content/tools/flatten-md.md --verbose
+# Install all executables
+card-api install my-tool.md
+# Installs: my-tool, my-tool-basic, my-tool-edge-cases, my-tool-perf
+# Run all tests
+card-api test my-tool.md
+# Updates Status with all results
+# Run just one test
+card-api test my-tool.md --only perf
+# Updates just that line in Status
 ```
-
-Result: 
-- Symlink created in artifacts/haskell-build/
-- Executable section added to haskell-build.cabal
-- Binary built and installed to artifacts/bin/
-
-### uninstall a card
-
-```bash
-card-api uninstall ~/sisyphus/content/tools/flatten-md.md --verbose
-```
-
-Result:
-- Symlink removed
-- Executable section removed from cabal file
-- Binary removed from artifacts/bin/
-
-### test a card
-
-```bash
-card-api test ~/sisyphus/content/tools/flatten-md.md
-```
-
-Result: Status section updated with test results
-
-### benchmark a card
-
-```bash
-# Run benchmark suite (reads ## benchmarks section from card)
-card-api benchmark ~/sisyphus/content/tools/flatten-md.md --iterations 100 --verbose
-
-# Or pass args for ad-hoc benchmark (use -- to separate flags from args)
-card-api benchmark ~/sisyphus/content/tools/flatten-md.md --iterations 100 --verbose -- flatten test-input.txt output.md
-```
-
-Example `## benchmarks` section in card:
-```markdown
-## benchmarks
-
-**flatten-base** ⟜ flatten --input-dir content/base/ --output /tmp/flat.md
-**unflatten-base** ⟜ unflatten --input /tmp/flat.md --output-dir /tmp/out
-```
-
-Result (benchmark suite):
-```
-Running benchmarks...
-Found 2 benchmark scenarios
-
-Running: flatten-base
-  Args: flatten --input-dir content/base/ --output /tmp/flat.md
-  Min:    15.88ms
-  Median: 17.88ms
-  Mean:   17.91ms
-  Max:    21.58ms
-
-Running: unflatten-base
-  Args: unflatten --input /tmp/flat.md --output-dir /tmp/out
-  Min:    10.12ms
-  Median: 11.45ms
-  Mean:   11.52ms
-  Max:    13.21ms
-
-Benchmark suite complete
-```
-
-Status section updated to:
-```markdown
-**Benchmark:**
-- flatten-base: 17.88ms (median over 100 runs)
-- unflatten-base: 11.45ms (median over 100 runs)
-```
-
 ## status
 
-**Tests:** ✓ passed - doctests working
-**Benchmark:** not yet run
-**Last updated:** 2025-12-31
+**Tests:** not yet run
 
-## upstream
+**Development Cost (Claude Code):**
+  - Tokens: 26,685,432 (input: 5,212, output: 792)
+  - Cache: 25,995,338 read, 684,090 created
+  - Cost: $3.46
+  - Time: ~2 hours
+  - Model: claude-haiku-4-5-20251001
+  - Session: 2026-01-01 06:05 UTC
+  - Work: removed Aeson token tracking (misplaced), cleaned dependencies, refactored discover-executables
 
-**Dependency tracking simplification** ⟜ retire custom dependency parsing in favor of cabal metadata
-- Remove parseDependencies, addExecutableToCabal, removeExecutableFromCabal functions
-- Let cabal handle dependency resolution automatically
-- Simplify card-api.md codebase
-
-**Multi-language support** ⟜ currently Haskell-only
-- Python cards via sed extraction (existing pattern)
-- C++ cards via gcc compilation
-- Detect language from fence info string
+**Last updated:** 2026-01-01
