@@ -1,9 +1,9 @@
 # content/base/welcome.md
 
 **markdown** ⟜ programming in, for and by markdown content/.
-**cast** ⟜ whether casting a spell or casting in lead.
+**cast** ⟜ whether casting a spell or casting in metal.
 **mash** ⟜ we mash and are mash.
-**escape** ⟜ (AI Human) (docs code) (data metadata) 
+**commons** ⟜ (AI ☯ Human) (docs ☯ code) (data ☯ meta) 
 
 ---
 
@@ -18,14 +18,12 @@
 
 ---
 
-
 ## **card system** ⟜ executable tools with full lifecycle
 
-**multiple executables** ⟜ main + tagged blocks in one card
-**universal interface** ⟜ install, test, benchmark, docs via card-api
-**self-documenting** ⟜ status sections track test results and costs
-**language agnostic** ⟜ haskell, python, shell, mixed implementations
-
+**casting** ⟜ cards are recipes; executables and routines cast into markdown.
+**interface** ⟜ install, test, benchmark, document and do via content/tools/
+**literate** ⟜ results, costs, tests, dev, bugs; it's literally on the card. 
+**agnostic** ⟜ haskell, python, c, shell: it's all markdown that works together.
 
 ---
 
