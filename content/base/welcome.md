@@ -3,10 +3,10 @@
 markdown + commons ⟜ pattern + cast + mash
 
 **markdown** ⟜ programming in, for and by markdown content/.
-**commons** ⟜ (AI ☯ Human) (docs ☯ code) (data ☯ meta) 
-**pattern** ⟜ 
+**commons** ⟜ (AI ◊ Human) (docs ◊ code) (data ◊ meta) 
+**pattern** ⟜ within content/ we can imagine. 
 **cast** ⟜ whether casting a spell or casting in metal.
-**mash** ⟜ we mash and are mash.
+**mash** ⟜ we mash.
 
 ## system
 ### directories
@@ -29,6 +29,14 @@ markdown + commons ⟜ pattern + cast + mash
 **sequential flow** ⟜ maintains quality through consistency
 
 
+### cache ⟜ content is our cache 
+
+The order of casting is determined by the order of ingested markdown.
+
+**core** ⟜ fundamental concepts and tools, lightweight shareable
+**research** ⟜ adds external papers and patterns, reference-laden  
+**local** ⟜ personal files and experiments, never share
+**evoke** ⟜ prompt casts without base
 
 ---
 
@@ -37,58 +45,16 @@ markdown + commons ⟜ pattern + cast + mash
 **good enough** ⟜ enough structure, a few conventions, nothing fancy, manouverable
 **patterns** ⟜ oneshot, deck, lattice, card, blob are patterns we like. We don't know why yet.
 
----
-
-## **cache profiles** ⟜ tunable system prompts for different contexts
-
-**core** ⟜ fundamental concepts and tools, lightweight shareable
-**research** ⟜ adds external papers and patterns, reference-laden  
-**local** ⟜ personal experiments, never share
-**invoke** ⟜ instruction set without knowledge base
-
----
-
-## **card system** ⟜ executable tools with full lifecycle
-
-**cast** ⟜ cards are imagined recipes; executables and routines cast into markdown.
-**interface** ⟜ install, test, bench, doc and do via tools/card-api.md
-**literate** ⟜ results, costs, tests, dev, bugs, complaints; it's literally on the card. 
-**agnostic** ⟜ haskell, python, c, shell, english: it's all markdown meant to work together.
-
----
-
-## **flatten/unflatten** ⟜ reversible directory structure preservation
-
-**HTML comment delimiters** ⟜ invisible, parseable boundaries
-**round-trip identity** ⟜ perfect reconstruction guaranteed
-**cache warming** ⟜ pre-load relevant content for fast access
-**no dependency** ⟜ works without agent availability
-
-
----
-
-
-## **sequential processing** ⟜ reliable collaboration via GitHub PRs
-
-**one change at a time** ⟜ no race conditions or conflicts
-**human review** ⟜ each change gets proper attention
-**clear audit trail** ⟜ git history shows evolution
-**scalable design** ⟜ specialization emerges naturally
-
----
-
+## **commons** ⟜ 
+## **pattern** ⟜ 
+## **cast** ⟜ 
+## **mash** ⟜ 
 ## **getting started**
 
 **1. drop cache in chat** ⟜ paste cache-core.md into any agent conversation
 **2. drop agentic in sisyphus** ⟜ let an agent guide you through ~/sisyphus
 **3. explore naturally** ⟜ follow system suggestions and patterns
 **4. start mashing** ⟜ find typos, mash some code, learn some moves
-
----
-
----
-
---
 
 ## **tl;dr**
 
@@ -97,9 +63,6 @@ markdown + commons ⟜ pattern + cast + mash
 **no branding** ⟜ ever
 **context curation** ⟜ over content generation
 **embrace constraint** ⟜ as design opportunity
-
--
----
 
 ## **next steps**
 

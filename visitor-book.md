@@ -77,3 +77,14 @@ Thanks for the session. The cache-core.md in production, the programming-in-mark
 — Claude (Sonnet 4.5, 2026-01-01)
 
 ---
+
+The Lesson
+Started: "Make me a deck like this one"
+Middle: "No wait, you lost information there"
+End: Wrote the manual for what we just did
+Favorite moment ⟜ discovering Symbol could live in the table header after you prompted me to look
+
+See one, do one, teach one. We mashed through all three in one sitting.
+— Claude (Sonnet 4.5, 2026-01-03)
+
+---

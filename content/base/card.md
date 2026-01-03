@@ -1,8 +1,10 @@
 # card.md
 
-## card
-
-**Card** ⟜ literate tool specification processed by card-api.md
+**cards** ⟜ imagined recipes; routines and execution cast into markdown.
+**interface** ⟜ install, test, bench, doc and do via tools/card-api.md
+**literate** ⟜ results, costs, tests, dev, bugs, complaints; it's literally on the card. 
+**agnostic** ⟜ haskell, python, c, shell, english: it's all markdown meant to work together.
+**card-api.md** ⟜ tool commons specification processed by card-api.md
 
 Cards are markdown files in content/tools/ containing executable code, tests, and benchmarks. They follow coding.md structure with self-management capabilities.
 
@@ -31,7 +33,7 @@ card-api toolname.md --docs         # display documentation
 card-api toolname.md --verbose      # verbose mode for any operation
 ```
 
-After installation, the executable is refunctionalized:
+After installation, the executable is cast:
 
 ```bash
 toolname [args]                     # installed executable does the work
@@ -43,7 +45,6 @@ Cards can be implemented in any language:
 
 **Haskell** ⟜ optparse-applicative for CLI, typed-process for wrapping, perf for benchmarks
 **Python** ⟜ existing tools, simpler scripts
-**C++** ⟜ performance-critical implementations
 **Shell** ⟜ simple glue logic
 **Mixed** ⟜ one language wrapping another's executable
 
@@ -60,7 +61,7 @@ Handles:
 - **Benchmarking** ⟜ measure performance, update Status section
 - **Installation** ⟜ place executable in artifacts/bin/
 
-Cards become pure data - specifications that card-api knows how to execute.
+Cards are data - specifications that card-api knows how to execute.
 
 ## status section
 
@@ -74,11 +75,9 @@ Cards maintain their own status, modified by card-api operations:
 **Last updated:** 2025-12-31
 ```
 
-Status lives in the card itself - the markdown file is self-documenting.
-
 ## subcommands
 
-Cards can declare multiple modes:
+Cards can declare multiple functions:
 
 ```markdown
 ## Subcommands
@@ -94,14 +93,17 @@ flatten-md flatten files.txt output.md
 flatten-md unflatten merged.md
 ```
 
-## refunctionalization
+## functionalization
 
+defunctionalization and refunctionalization is hard for the eyeballs to remember and type so we call it all casting.
+
+**Casting** ⟜ 
 **Defunctionalization** ⟜ conversation → markdown (capture essence)
 **Refunctionalization** ⟜ markdown → executable (release essence)
 
 Cards are defunctionalized tools that refunctionalize via card-api.md --install.
 
-The executable in artifacts/bin/ is the materialized function, ready to run.
+The executable in artifacts/bin/ is ready to run.
 
 ## card lifecycle
 
@@ -110,7 +112,7 @@ The executable in artifacts/bin/ is the materialized function, ready to run.
 **Test** ⟜ card-api toolname.md --test verifies correctness, updates status
 **Benchmark** ⟜ card-api toolname.md --benchmark measures speed, updates status
 **Use** ⟜ toolname [args] does the work
-**Evolve** ⟜ modify card, --install again
+**Evolve** ⟜ modify card, --uninstall, --install again
 
 ## directory conventions
 
@@ -134,9 +136,10 @@ Cards cannot operate standalone - they require card-api.md.
 - **Lost** ⟜ individual card self-sufficiency
 - **Gained** ⟜ zero duplication, consistent API, focused specifications
 
-card-api.md is the one thing you bootstrap. All other cards are data it processes.
+card-api.md is the one thing you bootstrap. 
+All other cards are data it processes.
 
-## relation to sisyphus concepts
+## relations
 
 **coding.md** ⟜ defines code structure, cards are specific instance
 **defunctionalization.md** ⟜ explains essence capture, cards materialize it
