@@ -2,10 +2,14 @@
 
 What emerges, responses, insights called forth.
 
+- [AGENTS](AGENTS)
 - [aikido](aikido)
-- [cool-heels](cool-heels)
-- [invoke](invoke)
-- [operators](operators)
-- [reliability](reliability)
+- [claude](claude)
+- [coolheels](coolheels)
+- [curate](curate)
+- [duality](duality)
+- [loop](loop)
+- [mash](mash)
+- [reliable](reliable)
 - [slip](slip)
 - [tank](tank)
