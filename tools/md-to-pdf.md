@@ -231,11 +231,3 @@ Expected differences:
 - Some formatting details lost
 
 Structure and content should survive.
-
-## upstream problems
-
-Round-trip conversion is lossy. Perfect equality is unlikely.
-
-Should we track acceptable differences? Or is visual inspection enough?
-
-Added to `org/`: define round-trip test acceptance criteria.

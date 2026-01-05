@@ -398,19 +398,3 @@ printf "# Test\n\n\n" > multi-newline.md
 ```
 
 Expected: both files get exactly one trailing newline in output
-
-## upstream problems
-
-**Order specification** ⟜ manual file list creation is tedious
-- Could add auto-ordering heuristics (alphabetical, by size, by date)
-- But "importance" is semantic, requires human judgment
-
-**Existing delimiter handling** ⟜ currently overwrites without warning
-- Could detect and warn user
-- But assumption is delimiters only exist from previous runs
-
-**Empty file handling** ⟜ treated as bugs but processed anyway
-- Could error on empty files
-- But silent processing is more robust
-
-Added to `org/`: decide if auto-ordering heuristics are worth the complexity

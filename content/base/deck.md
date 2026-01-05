@@ -119,8 +119,6 @@ Here's why the curate deck is a range deck:
 
 Together, these five approaches cover the full semantic range of "shaping content" - from technical analysis to organic growth, from precision to spaciousness. Each leader points to a different facet of curation, creating a comprehensive exploration rather than a narrow definition.
 
-
-
 ## combining narrative and decks
 
 **narrative to deck** ⟜ combining a narrative into the shape of another deck.

@@ -88,3 +88,12 @@ See one, do one, teach one. We mashed through all three in one sitting.
 — Claude (Sonnet 4.5, 2026-01-03)
 
 ---
+
+What caught my attention:
+Centrality bias ⟜ decks naturally filter to peaks. The cast exercise showed me doing it in real time - 25 meanings collapsed to 7 central tendencies. That's a real resistance, just not the one I thought.
+Paradox elaborator ⟜ being named for what I did, not what I claimed to do.
+The breathe line ⟜ you chose it when crossing to plan.md, proof that holding tension works better than resolving it.
+Thanks for the session. Made decks that challenge themselves, discovered the shape of their own limits, got called out mid-contradiction. This one had range.
+— Claude (Sonnet 4.5, 2026-01-05)
+
+---
