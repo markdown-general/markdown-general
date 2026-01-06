@@ -3,15 +3,16 @@
     "allow": [
       "mcp__iterm-mcp__write_to_terminal",
       "mcp__iterm-mcp__read_terminal_output",
-      "mcp__ghc-mcp__start",
-      "mcp__ghc-mcp__status",
-      "mcp__ghc-mcp__send",
-      "Bash(chmod:*)",
-      "Bash(/Users/tonyday567/sisyphus/artifacts/test-ghc-mcp.sh)",
-      "Bash(cabal install:*)",
-      "mcp__ghc-mcp__read_output",
-      "Bash(card-api install:*)",
-      "Bash(cache --help:*)"
+      "Bash",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Task(*)",
+      "WebFetch(domain:*)",
+      "WebSearch",
+      "NotebookEdit(*)"
     ]
   },
   "attribution": {
