@@ -19,3 +19,4 @@
 **Fallback** ◊ Minimal risk - geometric shapes are standard font components ⟜ Moderate risk - mathematical symbols less universally included ↦ Low risk - arrows are standard font components
 
 **Visual Metaphor** ◊ Diamond shape naturally suggests balance and opposition ⟜ Leftward multimap suggests transformation, elaboration, unwinding ↦ "maps to" - perfect for token transforming into elaboration
+

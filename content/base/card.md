@@ -1,10 +1,10 @@
 # card.md
 
 **cards** ⟜ imagined recipes; routines and execution cast into markdown.
-**interface** ⟜ install, test, bench, doc and do via tools/card-api.md
-**literate** ⟜ results, costs, tests, dev, bugs, complaints; it's literally on the card. 
+**interface** ⟜ install, test, bench, doc and do via language-specific tools
+**literate** ⟜ results, costs, tests, dev, bugs, complaints; it's literally on the card.
 **agnostic** ⟜ haskell, python, c, shell, english: it's all markdown meant to work together.
-**card-api.md** ⟜ tool commons specification processed by card-api.md
+**processors** ⟜ haskell-api.md for Haskell; python.md for Python; language-agnostic structure
 
 Cards are markdown files in content/tools/ containing executable code, tests, and benchmarks. They follow coding.md structure with self-management capabilities.
 
@@ -21,19 +21,24 @@ Cards extend coding.md with status tracking:
 **Tests** ⟜ expected behavior
 **Status** ⟜ test results and benchmark timings (updated by card-api.md)
 
-## universal API
+## deployment by language
 
-All cards support the same operations via card-api.md:
+Each language has its own installation and testing approach:
 
+**Haskell cards** ⟜ see haskell-api.md
 ```bash
-card-api toolname.md --install      # extract, compile, install to artifacts/bin/
-card-api toolname.md --test         # run tests, update status
-card-api toolname.md --benchmark    # measure performance, update status
-card-api toolname.md --docs         # display documentation
-card-api toolname.md --verbose      # verbose mode for any operation
+haskell-api toolname.md --install   # extract, compile, install to artifacts/bin/
+haskell-api toolname.md --test      # run tests, update status
 ```
 
-After installation, the executable is cast:
+**Python cards** ⟜ see python.md
+```bash
+# Extract and use via sed
+toolname() { sed -n '/^```python$/,/^```$/p' ~/sisyphus/tools/toolname.md | sed '1d;$d' | python3 - "$@"; }
+# Or create wrapper script in artifacts/bin/
+```
+
+After installation, all executables are cast:
 
 ```bash
 toolname [args]                     # installed executable does the work
@@ -50,22 +55,28 @@ Cards can be implemented in any language:
 
 Language detected from fenced code block info string: ```haskell, ```python, ```cpp
 
-## card-api processing
+## language-specific processing
 
-**card-api.md** ⟜ universal processor for all cards
+Each card type uses a language-specific processor:
 
-Handles:
-- **Extraction** ⟜ parse fenced blocks by language
-- **Compilation** ⟜ orchestrate stack/cabal/gcc/etc based on language
-- **Testing** ⟜ run tests, parse results, update Status section
-- **Benchmarking** ⟜ measure performance, update Status section
-- **Installation** ⟜ place executable in artifacts/bin/
+**Haskell cards** ⟜ haskell-api.md
+- Extraction ⟜ parse Haskell fenced blocks via markdown-unlit
+- Compilation ⟜ orchestrate cabal build
+- Testing ⟜ run doctests + executable tests, update Status section
+- Benchmarking ⟜ measure performance, update Status section
+- Installation ⟜ place executable in artifacts/bin/
 
-Cards are data - specifications that card-api knows how to execute.
+**Python cards** ⟜ python.md
+- Extraction ⟜ sed extracts python block from markdown
+- No compilation ⟜ direct execution via python3
+- Testing ⟜ run inline tests, update Status section
+- Installation ⟜ create wrapper script in artifacts/bin/
+
+Cards are data - specifications that language-specific tools know how to execute.
 
 ## status section
 
-Cards maintain their own status, modified by card-api operations:
+Cards maintain their own status, modified by language-specific tool operations:
 
 ```markdown
 ## Status
@@ -97,20 +108,20 @@ flatten-md unflatten merged.md
 
 defunctionalization and refunctionalization is hard for the eyeballs to remember and type so we call it all casting.
 
-**Casting** ⟜ 
+**Casting** ⟜
 **Defunctionalization** ⟜ conversation → markdown (capture essence)
 **Refunctionalization** ⟜ markdown → executable (release essence)
 
-Cards are defunctionalized tools that refunctionalize via card-api.md --install.
+Cards are defunctionalized tools that refunctionalize via language-specific processors.
 
 The executable in artifacts/bin/ is ready to run.
 
 ## card lifecycle
 
 **Write** ⟜ create literate tool in content/tools/toolname.md
-**Install** ⟜ card-api toolname.md --install creates artifacts/bin/toolname
-**Test** ⟜ card-api toolname.md --test verifies correctness, updates status
-**Benchmark** ⟜ card-api toolname.md --benchmark measures speed, updates status
+**Install** ⟜ language-specific tool extracts, builds, installs to artifacts/bin/
+**Test** ⟜ language-specific tool verifies correctness, updates status
+**Benchmark** ⟜ language-specific tool measures speed, updates status
 **Use** ⟜ toolname [args] does the work
 **Evolve** ⟜ modify card, --uninstall, --install again
 
@@ -122,51 +133,59 @@ The executable in artifacts/bin/ is ready to run.
 
 ## verbose mode
 
-When card-api.md --verbose is present:
+When language-specific tools are run with --verbose:
 
 **Prints docs** ⟜ card documentation at start
 **Shows deck** ⟜ progress indicators during operations
 **Diagnostic output** ⟜ compilation steps, test details, benchmark iterations
 
-## dependency
+## bootstrap requirement
 
-Cards cannot operate standalone - they require card-api.md.
+Cards require language-specific processors:
 
 **Trade-off:**
 - **Lost** ⟜ individual card self-sufficiency
 - **Gained** ⟜ zero duplication, consistent API, focused specifications
 
-card-api.md is the one thing you bootstrap. 
-All other cards are data it processes.
+Language-specific tools (haskell-api.md, python.md) are foundational bootstraps.
+All other cards are data they process.
 
 ## relations
 
 **coding.md** ⟜ defines code structure, cards are specific instance
 **defunctionalization.md** ⟜ explains essence capture, cards materialize it
-**cache.md** ⟜ cards are executable cache entries
-**sequential.md** ⟜ cards installed one at a time via card-api.md
+**haskell-api.md** ⟜ processor for Haskell cards
+**python.md** ⟜ processor for Python cards
+**sequential.md** ⟜ cards installed one at a time via language-specific tools
 
 Cards make tools mashable - they can be installed, tested, benchmarked, and evolved like any other content.
 
 ## examples
 
-**Pure implementation:**
+**Haskell card (pure implementation):**
 ```bash
 # flatten-md.md implements logic directly in Haskell
-card-api flatten-md.md --install
+haskell-api flatten-md.md --install
 flatten-md flatten files.txt output.md
 flatten-md unflatten merged.md
 ```
 
-**Wrapper pattern:**
+**Haskell card (wrapper pattern):**
 ```bash
 # pdf-to-md.md wraps marker-pdf executable via typed-process
-card-api pdf-to-md.md --install    # ensures marker-pdf available
-pdf-to-md input.pdf                # wrapper validates args, calls marker-pdf
+haskell-api pdf-to-md.md --install    # ensures marker-pdf available
+pdf-to-md input.pdf                   # wrapper validates args, calls marker-pdf
 ```
 
-**Testing and benchmarking:**
+**Python card:**
 ```bash
-card-api flatten-md.md --test       # updates Status section with results
-card-api flatten-md.md --benchmark  # updates Status section with timings
+# cache.md implements simple file operations in Python
+cache flatten                         # extract from tools/cache.md, run
+cache split cache-file.md             # direct execution via python3
+```
+
+**Testing and benchmarking (Haskell):**
+```bash
+haskell-api flatten-md.md --test       # updates Status section with results
+haskell-api flatten-md.md --benchmark  # updates Status section with timings
 ```

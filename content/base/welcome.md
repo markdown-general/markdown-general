@@ -68,7 +68,7 @@ The order of casting is determined by the order of ingested markdown.
 
 **read foundations** ⟜ content/base/sisyphus.md complete picture
 **explore core** ⟜ content/base/ for essential concepts
-**install tools** ⟜ try card-api with content/tools/
+**install tools** ⟜ try haskell-api or python.md with content/tools/
 **sign visitor book** ⟜ document meaningful collaborations
 
 Welcome. May your sisyphus/ be happy too.

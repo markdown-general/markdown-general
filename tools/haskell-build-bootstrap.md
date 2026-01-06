@@ -1,8 +1,8 @@
 # haskell-build-bootstrap.md
 
-One-time setup for the Haskell build directory used by card-api.md.
+One-time setup for the Haskell build directory used by haskell-api.md.
 
-Creates artifacts/haskell-build/ with initial cabal project. card-api.md will add executable sections as cards are installed.
+Creates artifacts/haskell-build/ with initial cabal project. haskell-api.md will add executable sections as cards are installed.
 
 ## what it does
 
@@ -12,11 +12,11 @@ Creates the foundation for Haskell card compilation:
 - markdown-unlit as build tool dependency
 - Empty executable list (populated by card-api install)
 
-## why separate from card-api
+## why separate from haskell-api
 
 **One-time setup** ⟜ run once, used by all Haskell cards
-**Foundation** ⟜ cabal project that card-api modifies
-**Clean separation** ⟜ bootstrap creates, card-api populates
+**Foundation** ⟜ cabal project that haskell-api modifies
+**Clean separation** ⟜ bootstrap creates, haskell-api populates
 
 ## extraction
 
@@ -71,18 +71,18 @@ common deps
   ghc-options: -Wall -pgmL markdown-unlit
   build-tool-depends: markdown-unlit:markdown-unlit
 
--- Executables added by card-api install
+-- Executables added by haskell-api install
 EOF
 
 echo "✓ Created artifacts/haskell-build/haskell-build.cabal"
 
-# Phase 2: Bootstrap card-api manually
+# Phase 2: Bootstrap haskell-api manually
 echo
-echo "Bootstrapping card-api..."
+echo "Bootstrapping haskell-api..."
 
 # Create symlink
 cd artifacts/haskell-build
-ln -sf ../../content/tools/card-api.md card-api.lhs
+ln -sf ../../content/tools/haskell-api.md card-api.lhs
 
 # Add card-api executable to cabal file
 cat >> haskell-build.cabal << 'EOF'
@@ -118,7 +118,7 @@ echo
 echo "Add to PATH:"
 echo "  export PATH=\$HOME/sisyphus/artifacts/bin:\$PATH"
 echo
-echo "Then use card-api to install other cards:"
+echo "Then use haskell-api to install other cards:"
 echo "  card-api install ~/sisyphus/content/tools/flatten-md.md"
 echo
 ```
@@ -138,10 +138,10 @@ common deps
   ghc-options: -Wall -pgmL markdown-unlit
   build-tool-depends: markdown-unlit:markdown-unlit
 
--- Executables added by card-api install
+-- Executables added by haskell-api install
 ```
 
-**card-api install** will append executable sections:
+**haskell-api install** will append executable sections:
 
 ```cabal
 executable flatten-md

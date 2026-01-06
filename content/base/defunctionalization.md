@@ -1,6 +1,13 @@
-# content/base/defunctionalization.md
+## cast
 
-## defunctionalization
+Managing both markdown and knowledge https://www.brics.dk/RS/01/23/BRICS-RS-01-23.pdf 
+
+
+When you mash the big books and read their markdown
+
+defunctionalization, refunctionalization and continuation passing style. 
+
+defunctionalization
 
 ### The Core Concept
 

@@ -9,7 +9,9 @@
       "Bash(chmod:*)",
       "Bash(/Users/tonyday567/sisyphus/artifacts/test-ghc-mcp.sh)",
       "Bash(cabal install:*)",
-      "mcp__ghc-mcp__read_output"
+      "mcp__ghc-mcp__read_output",
+      "Bash(card-api install:*)",
+      "Bash(cache --help:*)"
     ]
   }
 }

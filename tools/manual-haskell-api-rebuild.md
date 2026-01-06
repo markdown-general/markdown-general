@@ -1,10 +1,10 @@
-# Manual Card-API Rebuild
+# Manual Haskell-API Rebuild
 
-When you update card-api.md, follow these steps to rebuild it.
+When you update haskell-api.md, follow these steps to rebuild it.
 
 ## Why Manual?
 
-card-api can't install itself (chicken-and-egg problem). System tools need manual extraction and rebuild.
+haskell-api can't install itself (chicken-and-egg problem). System tools need manual extraction and rebuild.
 
 ## Quick Rebuild (after changes)
 
@@ -12,15 +12,15 @@ card-api can't install itself (chicken-and-egg problem). System tools need manua
 cd ~/sisyphus/artifacts/haskell-build
 
 # 1. Extract main executable
-markdown-unlit main -h ../../content/tools/card-api.md \
-  ../../content/tools/card-api.md card-api.hs
+markdown-unlit main -h ../../content/tools/haskell-api.md \
+  ../../content/tools/haskell-api.md card-api.hs
 
 # 2. Extract test executables (if they exist)
-markdown-unlit noop -h ../../content/tools/card-api.md \
-  ../../content/tools/card-api.md card-api-noop.hs
+markdown-unlit noop -h ../../content/tools/haskell-api.md \
+  ../../content/tools/haskell-api.md card-api-noop.hs
 
-markdown-unlit bench-syscall -h ../../content/tools/card-api.md \
-  ../../content/tools/card-api.md card-api-bench-syscall.hs
+markdown-unlit bench-syscall -h ../../content/tools/haskell-api.md \
+  ../../content/tools/haskell-api.md card-api-bench-syscall.hs
 
 # 3. Regenerate cabal file
 discover-executables
