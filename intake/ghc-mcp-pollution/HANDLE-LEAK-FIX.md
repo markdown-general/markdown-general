@@ -64,7 +64,7 @@ stopGhci state = do
 
 ## Testing Methodology
 
-Applied "human out of loop" principle from `content/evoke/human-out-of-loop.md`:
+Applied "human out of loop" principle from `zone/upgrades/human-out-of-loop.md`:
 
 1. **Identified slow loop:** Testing through Claude Code MCP interface
 2. **Created minimal local test:** Direct JSON-RPC via echo | ghc-mcp

@@ -175,7 +175,7 @@ card-api installs cards
 **The Script:**
 ```bash
 # Use bootstrap.sh for full setup
-~/sisyphus/bootstrap.sh
+~/markdown-general/bootstrap.sh
 
 # Or follow manual-card-api-rebuild.md for updates
 ```
@@ -230,12 +230,12 @@ let restWithoutContinuation = dropWhile isContinuationLine rest
 **The Traps:**
 ```haskell
 -- WRONG: ~ doesn't expand in Haskell
-flattenDirPerf "~/sisyphus/content/base" "/tmp/out.md"
--- Error: ~/sisyphus/content/base: does not exist
+flattenDirPerf "~/markdown-general/content/base" "/tmp/out.md"
+-- Error: ~/markdown-general/content/base: does not exist
 
 // RIGHT: Use getHomeDirectory
 home <- getHomeDirectory
-flattenDirPerf (home ++ "/sisyphus/content/base") "/tmp/out.md"
+flattenDirPerf (home ++ "/markdown-general/content/base") "/tmp/out.md"
 ```
 
 ```haskell
@@ -257,10 +257,10 @@ opts { reportGolden = (reportGolden opts) { golden = path } }
 ```haskell
 -- For home directory
 home <- getHomeDirectory
-let path = home </> "sisyphus/content/base"
+let path = home </> "markdown-general/content/base"
 
 // For project relative
-let path = "artifacts/haskell-golden/file.golden"  -- From ~/sisyphus
+let path = "artifacts/haskell-golden/file.golden"  -- From ~/markdown-general
 
 // For libraries with path handling
 -- Read the docs, don't assume!

@@ -2,14 +2,14 @@
 
 # Test 1: Create actual cache
 cache flatten
-# Should create: ~/sisyphus-cache/cache-current-260106.md
+# Should create: ~/markdown-general-cache/cache-current-260106.md
 
 # Verify creation
-ls -la ~/sisyphus-cache/cache-current-260106.md
+ls -la ~/markdown-general-cache/cache-current-260106.md
 
 # Test 2: Round-trip identity
 mkdir -p test-restore
-cache split ~/sisyphus-cache/cache-current-260106.md --output-dir test-restore
+cache split ~/markdown-general-cache/cache-current-260106.md --output-dir test-restore
 
 # Verify (should be identical or minimal differences)
 diff -r . test-restore/ || echo "Check for differences..."
@@ -41,16 +41,16 @@ cat restored/test-edge.md
 ## preparation
 
 Read these files to understand the system:
-1. **content/base/sisyphus.md** - sisyphus system overview
-2. **content/base/card.md** - how cards work  
-3. **content/tools/cache.md** - the new cache tool implementation
+1. **work/sisyphus.md** - sisyphus system overview
+2. **work/card.md** - how cards work  
+3. **zone/tools/cache.md** - the new cache tool implementation
 
 ## installation
 
 ### install cache card
 ```bash
 # Install cache.md using existing card-api
-card-api install ~/sisyphus/tools/cache.md
+card-api install ~/markdown-general/tools/cache.md
 
 # Verify installation
 cache --help
@@ -59,10 +59,10 @@ cache --help
 ### add to path
 ```bash
 # For current session
-export PATH="$HOME/sisyphus/artifacts/bin:$PATH"
+export PATH="$HOME/markdown-general/artifacts/bin:$PATH"
 
 # Or add to profile for persistence
-echo 'export PATH="$HOME/sisyphus/artifacts/bin:$PATH"' >> ~/.bashrc
+echo 'export PATH="$HOME/markdown-general/artifacts/bin:$PATH"' >> ~/.bashrc
 source ~/.bashrc
 ```
 
@@ -70,7 +70,7 @@ source ~/.bashrc
 
 ### test 1: basic functionality
 ```bash
-cd ~/sisyphus
+cd ~/markdown-general
 
 # Dry run to see what would be included
 cache flatten --dry-run
@@ -78,18 +78,18 @@ cache flatten --dry-run
 
 ### test 2: create actual cache
 ```bash
-# Create cache from content directory
-cd ~/sisyphus/content
+# Create cache from work directory
+cd ~/markdown-general/work
 cache flatten
 
 # Verify creation
-ls -la ~/sisyphus-cache/cache-content-200106.md
+ls -la ~/markdown-general-cache/cache-work-200106.md
 ```
 
 ### test 3: round-trip identity
 ```bash
 # Test structure survives flatten/unflatten
-cd ~/sisyphus
+cd ~/markdown-general
 
 mkdir -p test/a/b
 echo "# File A" > test/a/file.md
@@ -125,7 +125,7 @@ cat restored/test-edge.md
 
 - [ ] `cache --help` works
 - [ ] `cache flatten --dry-run` shows expected files
-- [ ] `cache flatten` creates cache file in ~/sisyphus-cache/
+- [ ] `cache flatten` creates cache file in ~/markdown-general-cache/
 - [ ] Round-trip test passes
 - [ ] HTML comment edge case handled correctly
 

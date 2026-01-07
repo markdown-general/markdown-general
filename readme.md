@@ -1,11 +1,11 @@
-we must ⟜ imagine sisyphus/ happy
+we must ⟜ imagine markdown-general/ happy
 
 ---
 
-markdown + commons ⟜ pattern + cast + mash
+markdown + commons ⟜ pattern + cast + grind
 
 ---
 
-[⟜ welcome](content/base/welcome.md)
+[⟜ welcome](work/welcome.md)
 
 

@@ -87,4 +87,4 @@ OR
 
 - ghc-mcp source: `~/repos/ghc-mcp/`
 - This conversation: Testing notification flow in Claude Code
-- Related: `content/tools/ghc-mcp.md`
+- Related: `zone/tools/ghc-mcp.md`
