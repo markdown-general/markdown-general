@@ -1,1 +1,1 @@
-read content/base/welcome.md
+read work/welcome.md
