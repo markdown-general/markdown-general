@@ -552,9 +552,3 @@ grep "FILE: cache-old.md" /tmp/exclude-test.md > /dev/null || echo "✓ Cache fi
 # Cleanup
 rm -rf /tmp/cache-exclude /tmp/exclude-test.md
 ```
-
-## relations
-
-**python.md** ⟜ deployment pattern for Python cards (this card uses it)
-**card.md** ⟜ general card structure and lifecycle
-**work/mash.md** ⟜ why caching is part of the mashing workflow

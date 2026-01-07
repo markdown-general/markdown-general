@@ -14,9 +14,14 @@
 - **Literate vs executable** ⟜ if tool is markdown, where's the actual binary?
 - **Human vs agent authority** ⟜ can agent overwrite human-written tools?
 
+## Ambiguities:
+
+Tool discovery ⟜ how does agent find tools? directory scan? index file? manifest?
+Metadata schema ⟜ what fields are required vs optional in tool JSON?
+Error propagation ⟜ how do failures bubble up through pipeline?
+Atomic operations ⟜ can workflows be transactional or always partial success?
 
 ---
-
 
 ## Performance Questions
 
@@ -27,9 +32,7 @@
 - **Incremental vs full** ⟜ re-run entire workflow or resume from failure point?
 - **Batch optimization** ⟜ processing 100 PDFs shouldn't need 100 planning cycles
 
-
 ---
-
 
 ## Security and Safety
 
@@ -40,9 +43,7 @@
 - **Runaway processes** ⟜ agent spawns infinite loop, consumes all resources
 - **Data exfiltration** ⟜ agent sends private content to external services
 
-
 ---
-
 
 ## Ambiguities Needing Clarification
 
@@ -53,9 +54,7 @@
 - **Tool testing** ⟜ how to verify agent-generated code before running?
 - **Human review** ⟜ which operations require approval vs auto-execute?
 
-
 ---
-
 
 ## Missing Specifications
 
@@ -63,7 +62,6 @@
 - **Agent prompts** ⟜ system prompts per operation or single universal prompt?
 - **Fallback behavior** ⟜ what happens when agent is unavailable?
 - **Execution model** ⟜ synchronous, async, event-driven, or mixed?
-
 
 ---
 
@@ -77,9 +75,7 @@
 - **Documentation drift** ⟜ literate tools modified without updating narrative sections
 - **Migration path** ⟜ how to move from non-agentic tools to agentic ones?
 
-
 ---
-
 
 ## Critical Gaps
 
@@ -91,36 +87,5 @@
 
 **Trust calibration** ⟜ users need to learn when to trust agent vs verify output. No clear signals for "this probably worked" vs "check this carefully."
 
-
 ---
 
-
-## What Needs Specification
-
-**Agent capabilities:**
-- Which operations require confirmation
-- How to constrain agent actions (sandbox, whitelist)
-- When to use cache vs re-analyze
-- Retry strategies for failures
-
-**Workflow semantics:**
-- How to express conditionals ("if confidence low...")
-- How to handle loops ("for each PDF...")
-- How to specify parallelism ("process concurrently")
-- How to define success criteria
-
-**Evolution policy:**
-- Who can modify which tools (human-only, agent-assisted, agent-autonomous)
-- How to migrate workflows to new tool versions
-
-
----
-
-
-## The Fundamental Tensions
-
-**Flexibility vs Safety** ⟜ open-ended agent actions enable powerful workflows but risk destructive mistakes. Need guard rails without killing the magic.
-
-**Determinism vs Intelligence** ⟜ traditional code is predictable, agent interpretation adds value but also variability. When is "close enough" acceptable?
-
-**Human vs Agent Authority** ⟜ who has final say on tool implementation? Agent suggestions are valuable but shouldn't silently overwrite human expertise.

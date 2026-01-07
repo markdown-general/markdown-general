@@ -183,19 +183,3 @@ trace ⟜ follows established pathways - navigating with the flow
 
 breathe ⟜ leaves room for new tributaries to form naturally
 
-## a lattice
-
-We can combine two decks with similar shape into a lattice. Here is an example, formed from the curate deck and the (renamed) river metaphor deck.
-
-**Curation as a River** ⟜ shaping content ⟞ content as landscape carved by river flow
-
-**sculpt** ⟜ find form with sparse graph surgery, density analytics, semantic weight calibration ⟞ removing surface layers to reveal bedrock form
-
-**prune** ⟜ identify rich connections, remove fuzzy edges, preserve core meanings ⟞ clears debris and deadwood, keeping the channel clear
-
-**structure** ⟜ respect structure, preserve relationships ⟞ creates banks that guide without constraining the current
-
-**trace** ⟜ trace paths, find loose ends, strengthen living connections ⟞ follows established pathways - navigating with the flow
-
-**breathe** ⟜ place space for future elaborations. use clearly vague gap words as semantic breath ⟞ leaves room for new tributaries to form naturally
-

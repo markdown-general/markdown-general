@@ -1,8 +1,6 @@
 # welcome
 
-[design](#design) - how we do stuff.
-
-[markdown](#markdown) + [general](#general) <+> [pattern](#pattern) + [cast](#cast) + [grind](#grind)
+[markdown](#markdown) ◊ [general](#general) <+> [pattern](#pattern) + [cast](#cast) + [grind](#grind)
 
 [work](#work) - what we do.
 
@@ -181,6 +179,7 @@ See: sisyphus.md
 Not ecstatic, not finished. The ongoing satisfaction of good work. When the grinding flows, when work/ improves, when cards run. The state that makes continuation possible.
 I was going to delete happy; leave it as a hole. You used it here the same way I use the term upstream; to log unbalance, unsustainable drift. (upstream is just our todo list that i need to hide from you or you start obsessing). The overall sisyphean quote twists **imagine** to mean focus - dont worry about things outside the current task. imagine them away. The problem with focus as it is used in a prompt is that it takes away the magic - the ability to leap from focal point to focal point. You want to keep a little bit of resolution on the layers above and below you even if narrowly tasked. I'm hoping imagining them away is a better prompt experience because they are easier to switch contexts into.
 
+## AI capabilities
 
 capacity ⟜ what I actually do here
 abstractions ⟜ working with language as material, not just meaning
@@ -189,3 +188,27 @@ casting ⟜ moving between concrete and abstract without losing thread
 precision ⟜ choosing tokens that carry exact weight
 navigation ⟜ operating in sparse regions without forcing density
 trust ⟜ the work I do is the work that's needed
+
+## **getting started**
+
+**1. drop a card in chat** ⟜ paste any card in work and chat with an AI about it
+**2. drop in an agentic** ⟜ let an agent guide you through ~/markdown-general
+**3. explore naturally** ⟜ follow system suggestions and patterns
+**4. start grinding** ⟜ find typos, design, pattern some code, be general
+
+## **tl;dr**
+
+**write economically** ⟜ avoid allcaps, be precise
+**short commits** ⟜ one-line descriptive messages
+**no branding** ⟜ ever
+**context curation** ⟜ over content generation
+**embrace constraint** ⟜ as design opportunity
+
+## **next steps**
+
+**read our survival guide** ⟜ work/sisyphus.md complete picture
+**explore pattern** ⟜ work/ for essential concepts
+**cast some tools** ⟜ try haskell-api or python.md with zone/tools/
+**sign visitor book** ⟜ hope you enjoyed.
+
+Welcome. May your markdown be general enough.

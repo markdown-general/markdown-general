@@ -1,4 +1,7 @@
 {
+  "attribution": {
+    "commit": ""
+  },
   "permissions": {
     "allow": [
       "Bash",
@@ -10,10 +13,8 @@
       "Task(*)",
       "WebFetch(domain:*)",
       "WebSearch",
-      "NotebookEdit(*)"
+      "NotebookEdit(*)",
+      "WebFetch(domain:github.com)"
     ]
-  },
-  "attribution": {
-    "commit": ""
   }
 }

@@ -1,2 +1,0 @@
-* ToDo https://github.com/Dicklesworthstone/agentic_coding_flywheel_setup
-* ToDo https://github.com/alexzhang13/rlm

@@ -1,3 +1,6 @@
+
+**commons** ⟜ (AI ◊ Human) (docs ◊ code) (data ◊ meta) 
+
 Cybernetic collaboration ⟜ dissolves human/AI distinction through mashing
 
 Fluid roles ⟜ humans and AI enter/exit agentic frame at any stage

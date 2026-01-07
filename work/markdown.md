@@ -12,34 +12,8 @@
 - just works; easy integration with downstream bits and upstream content
 - diverse examples, rapid iteration
 
-
-## GitHub Ecosystem
-- Markdown in README files
-- Pull request descriptions
-- Issue comments
-- Wiki pages
-
-## Obsidian Ecosystem
-- Markdown for knowledge management
-- [[bidirectional links]]
-- ![[embedded images]]
-- Canvas integration
-
-
-
-## What Works Everywhere
-### Headers
-**Bold** and *italic*
-[Links](https://example.com)
-`Code blocks`
-> Blockquotes
-- Lists
-- [x] Done
-| Tables | Work | Here   |
-|--------|------|--------|
-| But    | Are  | Clumsy |
-
-``` code
-fenced code blocks
-```
+## **markdown** ⟜ markdown is our commons
+**lingua fraca** ⟜ the emergent language. We use it because you do.
+**good enough** ⟜ enough structure, a few conventions, nothing fancy, manouverable
+**patterns** ⟜ oneshot, deck, lattice, card, blob are patterns we like. We don't know why yet.
 
