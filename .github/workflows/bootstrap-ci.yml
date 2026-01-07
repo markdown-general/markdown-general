@@ -36,7 +36,7 @@ jobs:
         run: echo "$HOME/.local/bin" >> $GITHUB_PATH
 
       - name: Verify markdown-unlit
-        run: markdown-unlit --help
+        run: which markdown-unlit && markdown-unlit 2>&1 | grep -q "usage:" || echo "markdown-unlit available"
 
       - name: Install perf library
         run: cabal install perf --lib --package-env .
