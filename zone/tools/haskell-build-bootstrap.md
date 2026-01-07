@@ -1,22 +1,23 @@
 # haskell-build-bootstrap.md
 
-One-time setup for the Haskell build directory used by haskell-api.md.
+Two-phase bootstrap for the Haskell build system.
 
-Creates artifacts/haskell-build/ with initial cabal project. haskell-api.md will add executable sections as cards are installed.
+Phase 1: Build discover-executables (cabal file generator)
+Phase 2: Build haskell-api (universal card processor)
 
 ## what it does
 
-Creates the foundation for Haskell card compilation:
+Bootstraps the Haskell toolchain in correct dependency order:
 - artifacts/haskell-build/ directory
-- haskell-build.cabal project file
-- markdown-unlit as build tool dependency
-- Empty executable list (populated by card-api install)
+- discover-executables (generates haskell-build.cabal from directory contents)
+- haskell-api (installs other cards)
+- Both executables installed to artifacts/bin/
 
-## why separate from haskell-api
+## why two phases
 
-**One-time setup** ⟜ run once, used by all Haskell cards
-**Foundation** ⟜ cabal project that haskell-api modifies
-**Clean separation** ⟜ bootstrap creates, haskell-api populates
+**Dependency order** ⟜ haskell-api needs discover-executables, so build it first
+**Automated cabal** ⟜ discover-executables generates cabal from directory contents
+**No manual edits** ⟜ cabal file is derived artifact, regenerated on every install/uninstall
 
 ## extraction
 
@@ -39,16 +40,16 @@ Save and execute this script from ~/markdown-general:
 
 ```bash
 #!/bin/bash
-# Bootstrap script for sisyphus haskell-build system
+# Bootstrap script for markdown-general haskell-build system
 # Run from ~/markdown-general directory
 
 set -e  # Exit on any error
 
-echo "=== Sisyphus Haskell Build Bootstrap ==="
+echo "=== markdown-general Haskell Build Bootstrap ==="
 echo
 
-# Ensure we're in sisyphus directory
-if [ ! -d "content/tools" ]; then
+# Ensure we're in markdown-general directory
+if [ ! -d "zone/tools" ]; then
     echo "ERROR: Run this from ~/markdown-general directory"
     exit 1
 fi
@@ -58,132 +59,162 @@ echo "Creating build directories..."
 mkdir -p artifacts/haskell-build
 mkdir -p artifacts/bin
 
-# Create initial cabal project
-echo "Creating haskell-build.cabal..."
-cat > artifacts/haskell-build/haskell-build.cabal << 'EOF'
-cabal-version: 3.0
+cd artifacts/haskell-build
+
+# Phase 1: Bootstrap discover-executables
+echo
+echo "Phase 1: Bootstrapping discover-executables..."
+markdown-unlit main -h ../../zone/tools/discover-executables.md \
+  ../../zone/tools/discover-executables.md discover-executables.hs
+
+# Create minimal cabal file with just discover-executables
+cat > haskell-build.cabal << 'EOF'
+cabal-version: 2.4
 name: haskell-build
 version: 0.1.0.0
 build-type: Simple
 
-common deps
+executable discover-executables
+  main-is: discover-executables.hs
+  build-depends: base, directory, filepath
+  ghc-options: -Wall
   default-language: Haskell2010
-  ghc-options: -Wall -pgmL markdown-unlit
-  build-tool-depends: markdown-unlit:markdown-unlit
-
--- Executables added by haskell-api install
 EOF
 
-echo "✓ Created artifacts/haskell-build/haskell-build.cabal"
+echo "Building discover-executables..."
+if ! cabal build discover-executables; then
+    echo "ERROR: discover-executables build failed"
+    exit 1
+fi
 
-# Phase 2: Bootstrap haskell-api manually
+echo "Installing discover-executables..."
+if ! cabal install discover-executables --installdir=../bin --overwrite-policy=always; then
+    echo "ERROR: discover-executables install failed"
+    exit 1
+fi
+
+# Phase 2: Bootstrap haskell-api
 echo
-echo "Bootstrapping haskell-api..."
+echo "Phase 2: Bootstrapping haskell-api..."
+markdown-unlit main -h ../../zone/tools/haskell-api.md \
+  ../../zone/tools/haskell-api.md haskell-api.hs
 
-# Create symlink
-cd artifacts/haskell-build
-ln -sf ../../zone/tools/haskell-api.md card-api.lhs
-
-# Add card-api executable to cabal file
-cat >> haskell-build.cabal << 'EOF'
-
-executable card-api
-  import: deps
-  main-is: card-api.lhs
-  build-depends: base, text, optparse-applicative, directory, filepath, process
-EOF
-
-# Build
-echo "Building card-api..."
-if ! cabal build card-api; then
-    echo "ERROR: cabal build failed"
+# Regenerate cabal file using discover-executables
+echo "Regenerating cabal file..."
+if ! ../bin/discover-executables; then
+    echo "ERROR: cabal regeneration failed"
     exit 1
 fi
 
-# Find and copy executable
-echo "Installing to artifacts/bin/..."
-CARD_API=$(find dist-newstyle -type f -name card-api -path "*/build/card-api/card-api" | head -1)
-if [ -z "$CARD_API" ]; then
-    echo "ERROR: Could not find built card-api executable"
+echo "Building haskell-api..."
+if ! cabal build haskell-api; then
+    echo "ERROR: haskell-api build failed"
     exit 1
 fi
 
-cp "$CARD_API" ../bin/card-api
+echo "Installing haskell-api..."
+if ! cabal install haskell-api --installdir=../bin --overwrite-policy=always; then
+    echo "ERROR: haskell-api install failed"
+    exit 1
+fi
 
 cd ../..
 
 echo
 echo "✓ Bootstrap complete!"
 echo
+echo "Installed executables:"
+ls -la artifacts/bin/
+echo
 echo "Add to PATH:"
 echo "  export PATH=\$HOME/markdown-general/artifacts/bin:\$PATH"
 echo
+echo "Or in your current session:"
+echo "  export PATH=$PWD/artifacts/bin:\$PATH"
+echo
 echo "Then use haskell-api to install other cards:"
-echo "  card-api install ~/markdown-general/zone/tools/flatten-md.md"
+echo "  haskell-api install zone/tools/cache.md"
 echo
 ```
 
 ## structure
 
-Initial cabal file structure:
+**Phase 1 cabal** (just discover-executables):
 
 ```cabal
-cabal-version: 3.0
+cabal-version: 2.4
 name: haskell-build
 version: 0.1.0.0
 build-type: Simple
 
-common deps
+executable discover-executables
+  main-is: discover-executables.hs
+  build-depends: base, directory, filepath
+  ghc-options: -Wall
   default-language: Haskell2010
-  ghc-options: -Wall -pgmL markdown-unlit
-  build-tool-depends: markdown-unlit:markdown-unlit
-
--- Executables added by haskell-api install
 ```
 
-**haskell-api install** will append executable sections:
+**Phase 2 cabal** (regenerated by discover-executables):
 
 ```cabal
-executable flatten-md
-  import: deps
-  main-is: flatten-md.lhs
-  build-depends: base, text, optparse-applicative, directory, filepath
+cabal-version: 2.4
+name: haskell-build
+version: 0
+build-type: Simple
 
-executable card-api
-  import: deps
-  main-is: card-api.lhs
-  build-depends: base, text, optparse-applicative, directory, filepath, process
+executable discover-executables
+  main-is: discover-executables.hs
+  build-depends: base, text, optparse-applicative, directory, filepath, process, perf, clock, containers
+  ghc-options: -Wall
+  default-language: Haskell2010
+
+executable haskell-api
+  main-is: haskell-api.hs
+  build-depends: base, text, optparse-applicative, directory, filepath, process, perf, clock, containers
+  ghc-options: -Wall
+  default-language: Haskell2010
 ```
+
+**After haskell-api install** (adds more executables):
+
+discover-executables regenerates cabal to include newly installed cards.
 
 ## verification
 
 After running bootstrap:
 
 ```bash
-ls -la ~/markdown-general/artifacts/haskell-build/
+ls -la ~/markdown-general/artifacts/bin/
 cat ~/markdown-general/artifacts/haskell-build/haskell-build.cabal
 ```
 
 Expected:
-- haskell-build.cabal exists
-- Contains common deps section
-- No executables yet
+- artifacts/bin/discover-executables exists and is executable
+- artifacts/bin/haskell-api exists and is executable
+- haskell-build.cabal contains both executables
+- Both have full dependency lists (base, text, optparse-applicative, directory, filepath, process, perf, clock, containers)
 
 ## next steps
 
-After bootstrap:
+After bootstrap, you can install other cards:
 
-1. Install first card:
+1. Add artifacts/bin to PATH:
 ```bash
-card-api install ~/markdown-general/zone/tools/flatten-md.md
+export PATH=$HOME/markdown-general/artifacts/bin:$PATH
 ```
 
-2. Verify executable section added:
+2. Install a card:
 ```bash
-cat ~/markdown-general/artifacts/haskell-build/haskell-build.cabal
+haskell-api install zone/tools/cache.md
 ```
 
-3. Check binary created:
+3. Verify it was added:
 ```bash
-ls ~/markdown-general/artifacts/bin/
+ls artifacts/bin/cache
+cat artifacts/haskell-build/haskell-build.cabal | grep "executable cache"
+```
+
+4. Test the card:
+```bash
+haskell-api test zone/tools/cache.md
 ```

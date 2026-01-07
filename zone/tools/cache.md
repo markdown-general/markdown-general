@@ -23,6 +23,29 @@ cache flatten
 # outputs ~/markdown-general-cache/cache-sisyphus-260106.md
 ```
 
+## file priorities
+
+When caching (throwing mudballs at chat AIs or agents), write order matters for context alignment.
+
+**Priority ordering** ⟜ important files first, rest alphabetically
+
+**work/welcome.md** ⟜ entry point and orientation
+**work/markdown.md** ⟜ shared medium definition
+**work/general.md** ⟜ operational stance and attitude
+**work/cast.md** ⟜ defunctionalization and making executable
+**work/pattern.md** ⟜ seeing and making patterns
+**work/grind.md** ⟜ practice of improvement
+**work/card.md** ⟜ executable markdown structure
+**work/tools.md** ⟜ tool ecosystem
+**work/cache.md** ⟜ why we cache and hand context
+**work/deck.md** ⟜ notation system used everywhere
+**work/lattice.md** ⟜ paired deck structures
+**work/sisyphus.md** ⟜ why and what of this place
+**work/task.md** ⟜ task structure and organization
+**work/upstream.md** ⟜ async todo management
+
+**Remaining files** ⟜ alphabetical order after priorities
+
 ## api
 
 ### flatten command
@@ -116,6 +139,46 @@ import fnmatch
 from datetime import datetime
 import sys
 
+# Priority ordering for work/ files
+PRIORITY_FILES = [
+    "work/welcome.md",
+    "work/markdown.md",
+    "work/general.md",
+    "work/cast.md",
+    "work/pattern.md",
+    "work/grind.md",
+    "work/card.md",
+    "work/tools.md",
+    "work/cache.md",
+    "work/deck.md",
+    "work/lattice.md",
+    "work/sisyphus.md",
+    "work/task.md",
+    "work/upstream.md",
+]
+
+def sort_by_priority(files, base_dir):
+    """Sort files by priority list, then alphabetically."""
+    def priority_key(file_path):
+        try:
+            rel_path = str(file_path.relative_to(base_dir))
+        except ValueError:
+            rel_path = str(file_path)
+
+        # Check if file is in priority list (handles both "work/file.md" and "file.md")
+        if rel_path in PRIORITY_FILES:
+            return (0, PRIORITY_FILES.index(rel_path), rel_path)
+
+        # Also check with "work/" prefix added (for when base_dir is work/)
+        work_path = f"work/{rel_path}"
+        if work_path in PRIORITY_FILES:
+            return (0, PRIORITY_FILES.index(work_path), rel_path)
+
+        # Not in priority list - alphabetical
+        return (1, 0, rel_path)
+
+    return sorted(files, key=priority_key)
+
 def find_files(patterns, base_dir, exclude_patterns=None, recursive=True):
     """Find files matching include patterns, excluding exclude patterns."""
     if exclude_patterns is None:
@@ -158,8 +221,8 @@ def find_files(patterns, base_dir, exclude_patterns=None, recursive=True):
                              for excl in exclude_patterns):
                         matched_files.add(file_path)
 
-    # Sort for consistent ordering
-    return sorted(matched_files)
+    # Sort with priority ordering
+    return sort_by_priority(matched_files, base_dir)
 
 def apply_smart_defaults(options):
     """Apply smart defaults when options are not explicitly set."""
