@@ -110,7 +110,7 @@ Current state: `~/.claude/CLAUDE.md` exists and applies globally:
   "model": "sonnet",                          // Model choice
   "statusLine": {
     "type": "command",
-    "command": "npx -y ccusage@latest statusline"
+    "command": "~/.claude/claude-status.sh"   // Shows branch, path, context %, daily cost
   },
   "enabledPlugins": {
     "hls@claude-hls": true                    // HLS (Haskell Language Server)
@@ -130,16 +130,21 @@ Array of allowed Bash commands, WebSearch, WebFetch with domain filters:
 ```
 
 ### Project permissions (~/sisyphus/.claude/settings.local.json)
+**Note:** sisyphus/ requires wide tool access. Claude needs Read/Write/Edit/Bash across the codebase for mashing work.
 ```json
 {
   "permissions": {
     "allow": [
-      "mcp__iterm-mcp__write_to_terminal",    // iTerm integration
-      "mcp__iterm-mcp__read_terminal_output",
-      "Bash(chmod:*)",
-      "Bash(cabal install:*)",
-      "Bash(card-api install:*)",
-      "Bash(cache --help:*)"
+      "Bash",
+      "Read(*)",
+      "Write(*)",
+      "Edit(*)",
+      "Glob(*)",
+      "Grep(*)",
+      "Task(*)",
+      "WebFetch(domain:*)",
+      "WebSearch",
+      "NotebookEdit(*)"
     ]
   }
 }
@@ -171,10 +176,9 @@ claude mcp list
 cat ~/.claude/CLAUDE.md
 ```
 
-**Output:**
+**Output (historical, MCP now removed):**
 ```
-iterm-mcp: npx -y iterm-mcp - ✓ Connected
-ghc-mcp: ghc-mcp  - ✓ Connected    [or] ✗ Failed: error message
+(No MCP servers in use as of 2026-01-07)
 ```
 
 **Contracts:**
@@ -232,8 +236,9 @@ echo "=== User instructions ==="
 
 ## Status
 
-**Validation:** ✓ Complete — documented as of 2025-01-06
-**MCP servers in sisyphus:** Previously had ghc-mcp (now removed), currently running iterm-mcp
+**Validation:** ✓ Complete — documented as of 2026-01-07
+**MCP servers in sisyphus:** Removed (ghc-mcp, iterm-mcp both unstable; no MCP dependencies required)
+**Status line:** `~/.claude/claude-status.sh` — shows branch → path | context % | daily cost
 **Global model:** Haiku 4.5 (claude-haiku-4-5-20251001)
 **Frontier model:** Claude Opus 4.5 (claude-opus-4-5-20251101)
 

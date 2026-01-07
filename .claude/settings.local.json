@@ -1,8 +1,6 @@
 {
   "permissions": {
     "allow": [
-      "mcp__iterm-mcp__write_to_terminal",
-      "mcp__iterm-mcp__read_terminal_output",
       "Bash",
       "Read(*)",
       "Write(*)",
