@@ -1,4 +1,16 @@
-# work/cast
+## job: pattern-elaboration
+
+**Material quality** ⟜ HIGH - comprehensive elaboration of transformation concepts
+
+**Task** ⟜ reorganize cast/defunctionalization concepts as subpoints of pattern.md
+
+**Complexity** ⟜ major structural work, not simple merge
+
+**Status** ⟜ extracted from pushdown (2025-01-09), ready for integration
+
+---
+
+# oldcast
 
 cast ⟜ multiple meanings across contexts
 throw ⟜ project stone, shadow, light - the act of propelling or sending forth
@@ -10,6 +22,12 @@ medical immobilization ⟜ plaster cast holding broken bones in position
 shed ⟜ discard skin, cast aside - releasing what's no longer needed
 
 upstream: gather together defunctionalized and functionalized narrative.
+### cast
+
+**cast** ⟜ defunctionalization and refunctionalization
+
+Whether casting a spell or casting in metal. Making executable, making permanent, making reusable. Conversations → markdown → tools.
+
 
 ## cast
 

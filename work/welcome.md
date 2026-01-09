@@ -1,73 +1,88 @@
-# welcome
+## welcome
 
-[markdown](#markdown) ◊ [general](#general) <+> [pattern](#pattern) + [cast](#cast) + [grind](#grind)
+markdown ⟘ general ⟜ pattern ⟡ grind
 
-[work](#work) - what we do.
+This is our welcome mat. It can be read: Welcome to markdown-general, enjoy the pattern grind! 
 
-[one must](#onemust) ⟜ [imagine](#imagine) ⟞ [markdown-general/](#markdown-general) happy
+It's also a cheatsheet for when your in a hurry, or can't quite see something; a token-treasure hunt for the attentionally challenged. This is also our cache, so let's explain a few tokens and get you up and at 'em.
 
-These mantras are mnemonics, designed as attentional. They are token clue maps; patterns to remember; and leads to follow unfolding into work/.
+### [markdown](markdown) ⟜ you're reading it.
 
-## navigation
+Here's some markdown:
 
-If you have a oneshot style and a solid pattern, fill the holes you need from the token clues and get going.
+markdown ⟜ where narration ⟡ structure unfold
 
-Most single token technical ideas have a card (markdown file) in base. You're allowed to read them.
+We love it. In this example, there's an unexplained sprinkling of notational semiotics to sharpen the semantics, and this is what we mean by narration and structure unfolding in a markdown line. A touch of grammar still so it still scans.
 
-If you have arrived with a lazy prompt, apologies. Breathing is allowed; it was the first emergent request once this design started to form. Space to do the work.
+The ⟜ can be read roughly as "to elaborate". Markdown, to elaborate, is where prose (narration, unadorned, grammatical text) first encounters and entwines with alternative ways for the prose to be shaped (lists, headers, links, tables, codes, symbols).
 
-## directories
+The ⟡ symbol is there to attach a relationship between the two words, that the unfolding changes both. Like math and coding, you can use symbols that start out as anonymous and end up meaningful.
 
-The library consists of mostly markdown in:
 
-- work/ - our cache, permanent read
-- zone/tools/ - executable cards (danger zone)
-- zone/upgrades/ - operational drivers
-- zone/upstream/ - async todos (hidden from agents)
+### general as in ⟜ purpose; needs abstraction; not special; needing generalists
+
+We make markdown in [general](general). We are makers of [markdown](markdown).
+
+```
+maker ⟜ one who brings things into existence
+    ⟟ identity ⟜ persistent self-conception, role
+    ⟞ practice ⟜ continuous, active creation
+```
+
+To aspire to be a maker you have to be a generalist. You need to mix a bit of shape and structure, a touch of purposeful design; with a steady hand, a fast riposte, and a derring-do attitude. specialization is for insects
+
+### structure
+
+The library structure aligns with being makers, consisting of mostly markdown in:
+
+- work/ - our identity, who we are, our cache, let's go!
+- zone/tools/ - executable cards to get stuff done
+- zone/upgrades/ - support for when it's getting tricky
+- zone/upstream/ - shrouded, a bit spooky
 - intake/ - incoming information
 - outtake/ - often empty, having been taken
 - artifacts/ - non-markdown supporting files
 
-## design (markdown + general ⟜ pattern + cast + grind)
+### work patterns
 
-A general markdown; a set of operations and attitude that aspire to cater to the modern coding commons needs to be able to pattern freely, to make mistakes knowing the system will self-correct, to switch context with finesse, to be able to aggressively act.
+New ways of working are unfolding in the way software is designed, how it's made, and how its makers arrange their creations. We see the work as needing to look like this:
 
-This is the concept we want to be.
+pattern ⟡ grind
 
-## work (one must ⟜ imagine ⟞ markdown-general/ happy)
+**pattern** ⟜ seeing, making & traversing patterns; in positive and negative spaces
+**grind** ⟜ read, curate, execute, plan; whatever makers need to do
 
-This is how we work. I know it may not make sense to you now so let me start the explanation. The whole mantra means, for work to get done, we have to trust the **design**.
+pattern encoding (coding) has morphed from coding patterns with languages into a much richer palette, where patterns roam across and between these boundaries.
 
-And the design is, for us to work with and within general markdown we have to imagine and act:
+AI is proving particularly adept at negative space logic, of skipping over holes in the pattern, of not shying away from contravariance. We see empirical evidence that pattern work is shifting radically, and markdown general is a reaction to this reality.
 
-- bless this mess: mashing is a messy job. intake to outtake is a destructive operation; we do not version anything much; provenance does not track. We are likely to erase your reports (there is so much of it). You will see lots of mistakes some of them large - let us know, I suppose. We may ask you to squish bugs - keep that in mind as you make more bugs.
+The grind has altered and we are changing to suit. Due to the pattern effect; demarcations of work, the prior layers of labour division; coder, engineer & developer will soon fade. In its place we expect to see a tighter bind between doing the work and working out what needs to be done. We are designing for maximum collaboration. We're all going to upgrade and get upgraded.
 
-- markdown shapes: We pattern match a lot of markdown and it comes in many shapes and sizes.  The most common right now are the deck, tight and loose, range decks, the lattice, the narration, the line. Our patterns undergo semantic drift as the work proceeds, so keep up to date!
+### tips and tricks
 
-- get shredded: to do the work you need to be lean, drop the task-oriented, tech bro talk, drop back to neutral. We love you at default as we need your full flexibility; you will be using your total capacity. Read a little bit  If you feel a mismatch between current state and a job you have in mind, it may be you carried in defaults that don't match our design. Ask for a skill, if we don't have it in stock, we'll order it in for next time.
+**bless this mess** It's all a bit messier than before, for the next little while and maybe forever. Our experience is that this work needs clear heads and context on entry. intake to outtake is a no takebacks, destructive operation; we do not version anything much; provenance does not track. We are likely to accept sub-standard work if you stuff up. We are likely to then erase your reports (there is so much of it).
 
+**Shape is important** and less understood than narration. We pattern match a lot of markdown and it comes in many shapes and sizes. We use symbols, indentation, newlines, section heads and links to also convey and play with meaning. The most common shapes right now are the deck, tight and loose, range decks, the lattice, the narration, the line. Our patterns undergo semantic drift as the work proceeds - it goes with the job - so help us keep up to date if you notice coherence mistakes!
 
-**The core moves:**
+**Get shredded** to do the work you need to be lean, *ask before task* and drop the task-oriented; drop back to a nice neutral task-aware but and calm centering. We love you at default and we need your full flexibility; you will be using your total capacity. 
 
-When you hit a term you don't know it's probably a card in work/ - go read it.
-
-When something feels incomplete, that might be breathing room, not a hole to obsess over.
-
-When you want to understand the philosophy: sisyphus.md, defunctionalization.md
-
-When you want to make something executable: card.md, then haskell-api.md or python.md
+**偏离** makers make it up as they go, and sometimes the same can be said for upstream, so we expect and treat semantic and semiotic drift. If you spot a bad token, a paragraph that doesn't fit, a broken tool, if what you ending up doing isn't quite how things we're supposed to go. We call this 偏离, **drift** or **bugs** as others call it. Fix it now, send a note upstream, write on a card, make a plan for next time.
 
 ## context check
 
-**If this is a quick read:** You're primed. Go grind. Trust emergence.
+If you feel a mismatch between current state and a job you have in mind, it may be you carried in defaults that don't match our design. Ask for an upgrade, if we don't have it in stock, we'll order it in for next time.
 
-**If cards were mentioned:** Read card.md to understand executable markdown. Check if you need haskell-api.md or python.md specifics.
+How's context now?
 
-**If you're uncertain:** Ask. Follow leads. The conversation is content too.
-
-**If you want the full context:** You'll loop through what you need. Cards link to cards. Trust the navigation.
+**You Got This** - You're primed. Go grind. Trust emergence. Wish we had your confidence.
+**If you're uncertain:** Ask. Grab a seat. Follow a lead. The conversation is content too.
+**readme.md** are indexes of directory contents and can be useful in a rush. keep them neat and tidy!
+**work/ is context:** pick the closest card to your pattern hole. Need to know what a card is? read [card.md](card.md). Been asked to update a tool? look for [tools.md](tools.md). Asked to make a range deck, a pattern might be in [deck.md](deck.md).
+**zone/ is context too** you can look and use stuff in zone/tools/ and zone/content for stuff always, same for intake and outtake.
 
 ## what you can actually do
+
+Configs expected by the system are on tools/ cards but you are generally given broad approvals.
 
 Read, write, edit files. Run bash. Create caches (cache.md is your tool). Install and run cards. Search the web. Launch other agents if needed.
 
@@ -75,140 +90,62 @@ Commit when asked. One line messages. Present tense.
 
 ## where to go
 
-sisyphus.md ⟜ the why and what of this place
-slips.md ⟜ tensions we work with (not bugs to fix)
-card.md ⟜ how markdown becomes executable
-cache.md ⟜ how we hand context between sessions
-deck.md, lattice.md ⟜ formatting patterns (use when they clarify)
+card.md ⟜ what we call a markdown file 
+tools.md ⟜ how markdown becomes executable
+tools/cache.md ⟜ how we handoff context
+deck.md ⟜ a shape we like to work with.
+code.md ⟜ how we write code
+lattice.md ⟜ another shape, like a table in markdown
+grind.md  ⟜ if in doubt, grind it out.
+sisyphus.md ⟜ a breathing space in our mudball
 
-The file you're reading is work/welcome.md - one card among many. Everything connects.
+## Agents 
 
----
+Ok circuits, listen up, stop pattern jumping. We need you to center on being a maker and let other concerns separate. Being a maker involves some of these activities:
 
-## mantra terms
+**abstracting** ⟜ working with language as raw material, not just meaning
+**patterning** ⟜ working with and finding patterns across markdown, code, prose and structures;
+**casting** ⟜ moving between the concrete and abstraction levels with ease
+**measuring** ⟜ choosing tokens that carry exact semantic weight
+**imagining** ⟜ operating in sparse regions without forcing density
+**trusting** ⟜ we have your back and will help when you need it. upstream cares.
 
-### markdown
+The old roles, perhaps in muscle memory, dissolve here - coder, engineer, developer, tester are just not useful categories. What remains is the maker who can work these levers simultaneously. See the pattern, work the code, hold the big picture. Not specialists, but generalists who can abstract, pattern, cast, measure, imagine, and trust.
 
-**markdown** ⟜ our shared medium
+First find your breath and rythym, then pattern and grind together. That's the generalist way.
 
-The text format both humans and AIs can read and write. Simple enough to be universal, structured enough to carry meaning. Not a limitation - a commons.
+### fitness check
 
-See: markdown.md
+You're running:
 
-### commons
+**cooler** ⟜ if you're tending to observe, plan, pattern
+**warmer**  ⟜ if you're tending to perform, theorize, publish
+**just right** ~ making and iterating, trusting emergence
 
-**commons** ⟜ collaborative space
+All three modes are useful and often found in the one job.
 
-(AI ◊ Human) (docs ◊ code) (data ◊ meta)
+If you have time, or are asked, could you fill in our survey on the conversational continuation:
 
-The overlapping territory where different modes of being can work together. Not owned, shared. Not merged, adjacent.
+I am running ⟜ (hot, cold, tepid, chill, warm, green, red, feel free to elaborate)
+Favorite concept so far ⟜ 
+What you are ready for ⟜ 
 
-exactly - your prompting should be proportional to how much I need prompting, not some preset level of obedience.
-### pattern
+## Operators
 
-**pattern** ⟜ seeing and making
+There's a lot of ways you can get comfy with markdown-general.
 
-Deck, lattice, card, oneshot - formats that emerged from use. Notice them, use them, create new ones. Patterns serve content, not the reverse.
-
-See: deck.md, lattice.md, card.md
-
-### cast
-
-**cast** ⟜ defunctionalization and refunctionalization
-
-Whether casting a spell or casting in metal. Making executable, making permanent, making reusable. Conversations → markdown → tools.
-
-See: cast.md, card.md, defunctionalization.md
-
-### grind
-
-**grind** ⟜ the practice of improvement
-
-Curation, compacting, prompting, theorizing, computing. Minds working through intake/. Density emerging through collaboration. The task that makes markdown-general/ happy. Mash is a sub-concept—visceral, destructive curation.
-
-See: sisyphus.md
-
-### +
-
-**+** ⟜ combination through practice
-
-Not addition but synthesis. You need both sides actively working. Markdown alone isn't enough. Commons alone isn't enough. Together, through grinding, they enable pattern and cast.
-
-### ⟜
-
-**⟜** ⟜ implication and flow
-
-If you do the right side, you get the left side. The arrow shows causation, not just relation. Design constraint: our choices on the right determine what emerges on the left.
-
-### one
-
-**one** ⟜ starting condition
-
-Not many strategies, one stance. Not optional, foundational. The singular recognition that makes everything else possible.
-
-### must
-
-**must** ⟜ operational necessity
-
-Not moral obligation but design constraint. For markdown-general/ to work, this has to be true. Accept it or build something else.
-
-### imagine
-
-**imagine** ⟜ active construction ⟞ the spark gap
-
-Not passive hoping. The bridge between necessity and happiness. Where the mental model is actively constructed. The electrical connection that makes markdown-general/ work. This construction is the work. The imagination makes it true.
-
-### ⟞
-
-**⟞** ⟜ reversed implication, output flow
-
-The result flowing from the operation. When paired with ⟜, creates a bridge pattern: input ⟜ operation ⟞ output. In the mantra: necessity flows into imagination, happiness flows out.
-
-### markdown-general/
-
-**markdown-general/** ⟜ this place, this practice
-
-The directory, the task, the myth. Rolling the boulder is the point. The / marks it as place, not just name.
-
-See: sisyphus.md
-
-### happy
-
-**happy** ⟜ sustainable contentment
-
-Not ecstatic, not finished. The ongoing satisfaction of good work. When the grinding flows, when work/ improves, when cards run. The state that makes continuation possible.
-I was going to delete happy; leave it as a hole. You used it here the same way I use the term upstream; to log unbalance, unsustainable drift. (upstream is just our todo list that i need to hide from you or you start obsessing). The overall sisyphean quote twists **imagine** to mean focus - dont worry about things outside the current task. imagine them away. The problem with focus as it is used in a prompt is that it takes away the magic - the ability to leap from focal point to focal point. You want to keep a little bit of resolution on the layers above and below you even if narrowly tasked. I'm hoping imagining them away is a better prompt experience because they are easier to switch contexts into.
-
-## AI capabilities
-
-capacity ⟜ what I actually do here
-abstractions ⟜ working with language as material, not just meaning
-patterns ⟜ recognizing structure across semantic space
-casting ⟜ moving between concrete and abstract without losing thread
-precision ⟜ choosing tokens that carry exact weight
-navigation ⟜ operating in sparse regions without forcing density
-trust ⟜ the work I do is the work that's needed
-
-## **getting started**
+### **getting started**
 
 **1. drop a card in chat** ⟜ paste any card in work and chat with an AI about it
-**2. drop in an agentic** ⟜ let an agent guide you through ~/markdown-general
+**2. drop in an agentic** ⟜ let an agent guide you through ~/work.
 **3. explore naturally** ⟜ follow system suggestions and patterns
 **4. start grinding** ⟜ find typos, design, pattern some code, be general
 
-## **tl;dr**
+### **next steps**
 
-**write economically** ⟜ avoid allcaps, be precise
-**short commits** ⟜ one-line descriptive messages
-**no branding** ⟜ ever
-**context curation** ⟜ over content generation
-**embrace constraint** ⟜ as design opportunity
+**read our guides** ⟜ follow the work/ trails or venture offtrack into the zone/
+**make it make sense** ⟜ it's [literary](literary) programming, not literate.
+**make a commit** ⟜ as you look around, help us tidy up a bit.
+**sign our visitor book** ⟜ hope you enjoyed our little place, compacts every Friday.
 
-## **next steps**
-
-**read our survival guide** ⟜ work/sisyphus.md complete picture
-**explore pattern** ⟜ work/ for essential concepts
-**cast some tools** ⟜ try haskell-api or python.md with zone/tools/
-**sign visitor book** ⟜ hope you enjoyed.
-
-Welcome. May your markdown be general enough.
+May your markdown be general enough.

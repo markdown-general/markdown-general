@@ -1,6 +1,6 @@
-# base
+# work
 
-Foundational content and patterns.
+Our identity, who we are, our cache, let's go!
 
 - [artifacts](artifacts)
 - [cache](cache)

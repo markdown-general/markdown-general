@@ -1,6 +1,6 @@
-content/ is our cache
+work/ is our cache
 
-Cache reality ⟜ content/ is intelligent cache system, not just storage
+Cache reality ⟜ work/ is intelligent cache system, not just storage
 
 Capture essence ⟜ conversations become markdown without agent calls
 Zero latency access ⟜ read insights directly, no API needed
