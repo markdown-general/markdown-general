@@ -3,3 +3,5 @@
 /artifacts/bin/
 /artifacts/haskell-build/
 /artifacts/haskell-golden/
+*/.claude/
+!.claude/
