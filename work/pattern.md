@@ -1,12 +1,14 @@
 # pattern.md
 
-**pattern** ⟜ 
+**pattern** ⟜ structure seen, made, compressed, cast, left empty
 
-**shape** ⟜ deck, lattice, narration, line - see shape.md, deck.md, lattice.md
-**recognition** ⟜ seeing structure across markdown, code, prose and structures  
-**encoding** ⟜ morphed from coding patterns with languages into a much richer palette roaming across boundaries
-**transformation** ⟜ moving between concrete and abstraction levels with ease
-**absence** ⟜ skipping over holes in the pattern, not shying away from contravariance
+**recognition** ⟜ seeing and searching; compare, select, merge
+**generate** ⟜ extend from positive space; replicate, reuse, extend
+**compress** ⟜ 
+**encoding** ⟜ 
+**transform** ⟜ 
+**shape** ⟜ curating and cataloguing patterns recognized.
+**absence** ⟜ the hidden, residue, negative space
 
 ## shape
 

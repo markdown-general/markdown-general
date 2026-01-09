@@ -1,4 +1,4 @@
-# zone/tools/curate.md
+# zone/upgrades/curate.md
 
 **curate** ⟜ shaping content
 
