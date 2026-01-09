@@ -9,7 +9,7 @@ Location: ~/markdown-general-cache/cache-260105.md
 Files: 92 markdown files, 9,715 lines
 Cost: $0.23
 
-**What**: Complete markdown-general/ snapshot for tidy-up and intake decisions.
+**What**: Complete markdown-general/ snapshot for tidy-up.
 
 **Included**: All .md files in markdown-general/
 
@@ -26,11 +26,6 @@ Cost: $0.23
 - ./zone/tools/.claude/settings.local.json
 - ./zone/tools/discover-executables.hs
 - ./crypto_poller.py
-- ./intake/bootstrap.sh
-- ./intake/ghc-mcp-pollution/Process.hs
-- ./intake/ghc-mcp-pollution/Server.hs
-- ./intake/ghc-mcp/Tools.hs
-- ./intake/ghc-mcp/cabal.project
 - ./org/refile.org
 
 **Method**: Simple bash script with find + exclusions, wrapped content with `<!-- FILE: path -->` markers.
@@ -47,12 +42,11 @@ Created: 2026-01-05
 Location: ~/markdown-general-cache/cache-priority-zero.md
 Files: 35 markdown files, 1,894 lines
 
-**What**: Clean content cache excluding experiments and intake.
+**What**: Clean content cache excluding experiments.
 
 **Included**: content/ directory only (work/ + zone/upgrades/)
 
 **Excluded**:
-- intake/
 - tools/
 - upstream/
 - artifacts/

@@ -52,7 +52,7 @@ When caching (throwing mudballs at chat AIs or agents), write order matters for 
 
 **Smart Defaults:**
 - `--include "**/*"` (all files)
-- `--exclude "cache-*.md" "artifacts/**" "content/self/**" "content/blog/**" "content/upstream/**" "org/**" "intake/**"`
+- `--exclude "cache-*.md" "artifacts/**" "content/self/**" "content/blog/**" "content/upstream/**" "org/**"`
 - `--dir .` (current directory)
 - `--recursive` (default true)
 - `--cache-dir ~/markdown-general-cache/`
@@ -240,8 +240,7 @@ def apply_smart_defaults(options):
             "content/self/**",
             "content/blog/**",
             "content/upstream/**",
-            "org/**",
-            "intake/**"
+            "org/**"
         ]
 
     if not options.cache_dir:

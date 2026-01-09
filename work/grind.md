@@ -17,11 +17,17 @@ It is the task of improving.
 
 **grind** ⟜ the practice of improvement
 
-Curation, compacting, prompting, theorizing, computing. Minds working through intake/. Density emerging through collaboration.
+Curation, compacting, prompting, theorizing, computing. Density emerging through collaboration.
 
 
 ### mash
 
 mash is a sub-concept. visceral, destructive curation.
+
+### cast
+
+**casting** - markdown into actions into markdown into actions ...
+**Not declarative** ⟜ avoids cliche cascades and abstraction layers
+**Functional** ⟜ captures the essence of functions (broad sense: agents that take inputs and give outputs)
 
 

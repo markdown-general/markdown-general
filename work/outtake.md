@@ -1,3 +1,0 @@
-## outtake
-
-often empty
