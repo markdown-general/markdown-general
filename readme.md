@@ -1,5 +1,8 @@
+Welcome to markdown-general.
 
-[markdown](work/markdown.md) + [general](work/general.md) ⟜ [cast](work/cast.md) + [pattern](work/pattern.md) + [grind](work/grind.md)
+markdown ⟘ general ⟜ pattern ⟡ grind
+
+*we grind with our minds*
 
 ---
 
