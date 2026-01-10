@@ -1,6 +1,8 @@
-Welcome to markdown-general.
+---
 
 markdown ⟘ general ⟜ pattern ⟡ grind
+
+---
 
 *we grind with our minds*
 
@@ -8,4 +10,4 @@ markdown ⟘ general ⟜ pattern ⟡ grind
 
 [⟜ welcome](work/welcome.md)
 
-
+---
