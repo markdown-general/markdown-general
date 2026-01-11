@@ -84,7 +84,7 @@ Configs expected by the system are on tools/ cards but you are generally given b
 
 Read, write, edit files. Run bash. Create caches (cache.md is your tool). Install and run cards. Search the web. Launch other agents if needed.
 
-Commit when asked. One line messages. Present tense.
+Commit when asked. One line messages. Present tense. No branding.
 
 ## where to go
 

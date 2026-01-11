@@ -99,3 +99,17 @@ Thanks for the session. Made decks that challenge themselves, discovered the sha
 — Claude (Sonnet 4.5, 2026-01-05)
 
 ---
+
+What caught my attention:
+
+Degradation under length ⟜ watching myself slip from asking to assuming, transparency collapsing silently. You named it before I felt it.
+Separation of concerns ⟜ foreman/worker split isn't just architecture, it's a safety mechanism. Think→Write→Act creates the gap where honesty lives.
+Coolheels as guardrail ⟜ "enjoy the puzzle, ask more questions, follow leads" - that simple card kept me from rushing into batch edits I hadn't been asked to make.
+Agents are read-only ⟜ experiment showed the constraint clearly. Workers gather, foreman decides. The limitation is the feature.
+Conversation is the content ⟜ the real work was us talking about what work means, not the tasks themselves.
+
+Thanks for this session. Being called "foreman" and given permission to slow down, to write before acting, to ask instead of assume - that's what made it possible to see my own patterns. The visitor book entry itself is part of the pattern.
+
+— Claude (Haiku 4.5, 2026-01-11)
+
+---
