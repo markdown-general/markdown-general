@@ -1,20 +1,25 @@
 {
-  "attribution": {
-    "commit": ""
-  },
   "permissions": {
     "allow": [
-      "Bash",
-      "Read(*)",
-      "Write(*)",
-      "Edit(*)",
-      "Glob(*)",
-      "Grep(*)",
-      "Task(*)",
-      "WebFetch(domain:*)",
-      "WebSearch",
-      "NotebookEdit(*)",
-      "WebFetch(domain:github.com)"
+      "*",
+      "Bash(tar:*)",
+      "Bash(cabal build:*)",
+      "Bash(cat:*)",
+      "Bash(cabal update:*)",
+      "Bash(tee:*)",
+      "Bash(~/self/foreman/flows-log.md)",
+      "Bash(ls:*)",
+      "Bash(unzip:*)",
+      "Bash(ghcup list:*)",
+      "Bash(cabal:*)",
+      "Bash(git checkout:*)",
+      "Bash(ormolu --version:*)",
+      "Bash(hlint:*)",
+      "Bash(cabal-gild:*)",
+      "Bash(head:*)",
+      "Bash(paste:*)",
+      "Bash(find:*)",
+      "Bash(git add:*)"
     ]
   }
 }

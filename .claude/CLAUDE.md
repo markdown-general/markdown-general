@@ -1,1 +1,0 @@
-read work/welcome.md

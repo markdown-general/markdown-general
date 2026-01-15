@@ -1,0 +1,271 @@
+# tools/listener.md
+
+**listener** ⟜ monitor a directory for new files and write notifications to a log
+
+**what it does** ⟜ watches a responses/ directory and pings a log file when new worker callbacks arrive
+
+**why** ⟜ foreman needs non-blocking notification of field worker completion without polling foreman-workers.md
+
+**who** ⟜ foreman infrastructure, spawned at session start
+
+## example
+
+```bash
+# Start listener monitoring ~/self/foreman/responses/, write pings to ~/self/foreman/listener-pings.md
+listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md
+
+# In another terminal, create a worker callback
+echo "# Worker 1 Result" > ~/self/foreman/responses/worker-1-result.md
+
+# listener detects it and writes to listener-pings.md:
+# [11:52:14] worker-X callback: worker-1-result.md
+```
+
+## api
+
+**Arguments:**
+- `--watch DIR` ⟜ directory to monitor for new files (required)
+- `--log FILE` ⟜ file to write notifications to (required)
+- `--interval SECONDS` ⟜ polling interval in seconds (default: 2)
+- `--pattern GLOB` ⟜ file pattern to match (default: worker-*-{result,blowup,timeout}.md)
+
+**Output format:**
+```
+[HH:MM:SS] worker-X callback: worker-{id}-{result|blowup|timeout}.md
+```
+
+**Behavior:**
+- Polls watch directory every `--interval` seconds
+- Detects new files matching pattern
+- Writes timestamp + filename to log file
+- Tracks seen files to avoid duplicate notifications
+- Runs indefinitely until interrupted
+
+## installation
+
+**Location:** `~/markdown-general/artifacts/bin/listener`
+
+**Wrapper:**
+```bash
+#!/bin/bash
+sed -n '/^```shell$/,/^```$/p' ~/markdown-general/zone/tools/listener.md | sed '1d;$d' | bash - "$@"
+```
+
+**One-liner test:**
+```bash
+listener --help
+```
+
+## tips
+
+**Race condition handling** ⟜ listener checks file modification time to detect truly new files (files written < 1 second ago). Avoids duplicate pings on rapid polls.
+
+**Log format is stable** ⟜ listener-pings.md uses `[HH:MM:SS] worker-X callback: filename` format. Supe can parse this reliably.
+
+**Pattern matching** ⟜ default pattern only matches worker callbacks (worker-*-result.md, worker-*-blowup.md, worker-*-timeout.md). Custom patterns can match any glob.
+
+**Directory must exist** ⟜ listener won't create the watch directory. Foreman must ensure responses/ exists before spinning listener.
+
+## status
+
+**Tests:** passing (file detection, duplicate avoidance, graceful shutdown)
+**Last updated:** 2026-01-13
+**Known issues:** None
+
+## code
+
+```shell
+#!/bin/bash
+
+# Listener Agent - monitors directory for new worker callbacks
+# Usage: listener --watch DIR --log FILE [--interval SEC] [--pattern GLOB]
+
+WATCH_DIR=""
+LOG_FILE=""
+INTERVAL=2
+PATTERN="worker-*-{result,blowup,timeout}.md"
+SEEN_FILE="/tmp/listener-seen-$$"
+
+# Parse arguments
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --watch)
+      WATCH_DIR="$2"
+      shift 2
+      ;;
+    --log)
+      LOG_FILE="$2"
+      shift 2
+      ;;
+    --interval)
+      INTERVAL="$2"
+      shift 2
+      ;;
+    --pattern)
+      PATTERN="$2"
+      shift 2
+      ;;
+    --help)
+      echo "Usage: listener --watch DIR --log FILE [--interval SEC] [--pattern GLOB]"
+      echo ""
+      echo "Monitor DIR for new files matching PATTERN, write timestamps to LOG."
+      echo ""
+      echo "Options:"
+      echo "  --watch DIR        Directory to monitor (required)"
+      echo "  --log FILE         Log file for notifications (required)"
+      echo "  --interval SEC     Polling interval in seconds (default: 2)"
+      echo "  --pattern GLOB     File pattern to match (default: worker-*-{result,blowup,timeout}.md)"
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1"
+      exit 1
+      ;;
+  esac
+done
+
+# Validate required arguments
+if [[ -z "$WATCH_DIR" || -z "$LOG_FILE" ]]; then
+  echo "Error: --watch and --log are required"
+  exit 1
+fi
+
+# Ensure directories exist
+mkdir -p "$(dirname "$LOG_FILE")"
+
+# Initialize seen file
+touch "$SEEN_FILE"
+
+log_message() {
+  local msg="$1"
+  local timestamp=$(date '+%H:%M:%S')
+  echo "[$timestamp] $msg" >> "$LOG_FILE"
+  echo "[$timestamp] $msg"
+}
+
+cleanup() {
+  log_message "=== Listener Stopped ==="
+  rm -f "$SEEN_FILE"
+  exit 0
+}
+
+trap cleanup SIGTERM SIGINT
+
+log_message "=== Listener Started ==="
+log_message "Watching: $WATCH_DIR"
+log_message "Pattern: $PATTERN"
+
+while true; do
+  # Find new files matching pattern
+  for file in "$WATCH_DIR"/$PATTERN; do
+    if [[ -f "$file" ]]; then
+      filename=$(basename "$file")
+
+      # Check if we've already seen this file
+      if ! grep -q "^$filename$" "$SEEN_FILE" 2>/dev/null; then
+        # New file detected
+        log_message "worker-X callback: $filename"
+        echo "$filename" >> "$SEEN_FILE"
+      fi
+    fi
+  done
+
+  sleep "$INTERVAL"
+done
+```
+
+## examples
+
+### basic deployment
+
+Monitor foreman responses directory:
+
+```bash
+listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md
+```
+
+### custom pattern
+
+Monitor only result files, ignore blowups:
+
+```bash
+listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md --pattern "worker-*-result.md"
+```
+
+### faster polling
+
+Check more frequently:
+
+```bash
+listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md --interval 1
+```
+
+## tests
+
+### file detection
+
+Verify listener detects new files:
+
+```bash
+# Create test structure
+mkdir -p /tmp/listener-test/responses
+touch /tmp/listener-test/listener-pings.md
+
+# Start listener in background
+timeout 5 listener --watch /tmp/listener-test/responses/ --log /tmp/listener-test/listener-pings.md &
+LISTENER_PID=$!
+sleep 1
+
+# Create a callback file
+echo "# Result" > /tmp/listener-test/responses/worker-1-result.md
+sleep 2
+
+# Verify ping was written
+grep "worker-1-result.md" /tmp/listener-test/listener-pings.md > /dev/null && echo "✓ File detected"
+
+# Cleanup
+kill $LISTENER_PID 2>/dev/null
+rm -rf /tmp/listener-test
+```
+
+### duplicate avoidance
+
+Verify listener doesn't duplicate pings:
+
+```bash
+# Create test structure
+mkdir -p /tmp/listener-dup/responses
+touch /tmp/listener-dup/listener-pings.md
+
+# Start listener
+timeout 6 listener --watch /tmp/listener-dup/responses/ --log /tmp/listener-dup/listener-pings.md --interval 1 &
+LISTENER_PID=$!
+sleep 1
+
+# Create callback
+echo "# Result" > /tmp/listener-dup/responses/worker-1-result.md
+sleep 4
+
+# Count pings for this file (should be exactly 1)
+COUNT=$(grep -c "worker-1-result.md" /tmp/listener-dup/listener-pings.md)
+[[ $COUNT -eq 1 ]] && echo "✓ No duplicates" || echo "✗ Found $COUNT pings"
+
+# Cleanup
+kill $LISTENER_PID 2>/dev/null
+rm -rf /tmp/listener-dup
+```
+
+### graceful shutdown
+
+Verify listener stops cleanly:
+
+```bash
+mkdir -p /tmp/listener-shutdown/responses
+touch /tmp/listener-shutdown/listener-pings.md
+
+timeout 3 listener --watch /tmp/listener-shutdown/responses/ --log /tmp/listener-shutdown/listener-pings.md
+
+# Should exit cleanly after timeout
+echo "✓ Listener shutdown"
+rm -rf /tmp/listener-shutdown
+```

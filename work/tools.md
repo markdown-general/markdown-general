@@ -6,7 +6,7 @@
 **agnostic** ⟜ haskell, python, c, shell, english: it's all markdown meant to work together.
 **processors** ⟜ haskell-api.md for Haskell; python.md for Python; language-agnostic structure
 
-Cards are markdown files in zone/tools/ containing executable code, tests, and benchmarks. They follow coding.md structure with self-management capabilities.
+Cards are markdown files in cards/tools/ containing executable code, tests, and benchmarks. They follow coding.md structure with self-management capabilities.
 
 ## card contents
 
@@ -42,7 +42,7 @@ haskell-api toolname.md --test      # run tests, update status
 **Python cards** ⟜ see python.md
 ```bash
 # Extract and use via sed
-toolname() { sed -n '/^```python$/,/^```$/p' ~/markdown-general/tools/toolname.md | sed '1d;$d' | python3 - "$@"; }
+toolname() { sed -n '/^```python$/,/^```$/p' ~/markdown-general/cards/tools/toolname.md | sed '1d;$d' | python3 - "$@"; }
 # Or create wrapper script in artifacts/bin/
 ```
 
@@ -126,7 +126,7 @@ The executable in artifacts/bin/ is ready to run.
 
 ## card lifecycle
 
-**Write** ⟜ create literate tool in zone/tools/toolname.md
+**Write** ⟜ create literate tool in cards/tools/toolname.md
 **Install** ⟜ language-specific tool extracts, builds, installs to artifacts/bin/
 **Test** ⟜ language-specific tool verifies correctness, updates status
 **Benchmark** ⟜ language-specific tool measures speed, updates status
@@ -135,8 +135,9 @@ The executable in artifacts/bin/ is ready to run.
 
 ## directory conventions
 
-**zone/tools/** ⟜ where cards live
-**work/** ⟜ where card.md lives (this file)
+**cards/tools/** ⟜ where tool cards live
+**cards/** ⟜ where all cards live (workflow, actions, policy)
+**work/** ⟜ where work.md files live (this file)
 **artifacts/bin/** ⟜ where executables go (must be on PATH)
 
 ## verbose mode
