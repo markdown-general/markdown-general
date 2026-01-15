@@ -99,7 +99,7 @@ lattice.md ⟜ another shape, like a table in markdown
 reflect.md  ⟜ if in doubt, reflect on out.
 breathe.md ⟜ a breathing space in our mudball
 worker.md ⟜ field worker semantic palette (spinners, gremlins, fairies, sparks, circuits)
-field-guide.md ⟜ field execution model, foreman coordination, supe oversight
+field-guide.md ⟜ field execution model, yin coordination, supe oversight
 drift.md ⟜ semantic drift detection, recovery, and reestablishing state
 
 ## Agents 

@@ -59,15 +59,15 @@ You need: Bash, Read(*), Write(*), Glob(*), Grep(*), Edit(*)
 ### 2. Create Directories
 
 ```bash
-mkdir -p ~/self/foreman/cards
-mkdir -p ~/self/foreman/responses
-mkdir -p ~/self/foreman/logs
-touch ~/self/foreman/foreman-workers.md
-touch ~/self/foreman/yin-notes.md
-touch ~/self/foreman/flows-log.md
+mkdir -p ~/self/yin/cards
+mkdir -p ~/self/yin/responses
+mkdir -p ~/self/yin/logs
+touch ~/self/yin/yin-workers.md
+touch ~/self/yin/yin-notes.md
+touch ~/self/yin/flows-log.md
 ```
 
-### 3. Initialize foreman-workers.md
+### 3. Initialize yin-workers.md
 
 Only for bounded workers. If using skip-step only, you can skip.
 
@@ -85,8 +85,8 @@ Only for bounded workers. If using skip-step only, you can skip.
 ```bash
 chmod +x ~/markdown-general/artifacts/bin/tailie
 nohup ~/markdown-general/artifacts/bin/tailie \
-  --watch ~/self/foreman/flows-log.md \
-  --output ~/self/foreman/tailie-synthesis.md \
+  --watch ~/self/yin/flows-log.md \
+  --output ~/self/yin/tailie-synthesis.md \
   > /tmp/tailie.log 2>&1 &
 ```
 
@@ -95,8 +95,8 @@ nohup ~/markdown-general/artifacts/bin/tailie \
 ```bash
 chmod +x ~/markdown-general/artifacts/bin/timer
 nohup ~/markdown-general/artifacts/bin/timer \
-  --workers ~/self/foreman/foreman-workers.md \
-  --responses ~/self/foreman/responses/ \
+  --workers ~/self/yin/yin-workers.md \
+  --responses ~/self/yin/responses/ \
   --interval 2 \
   > /tmp/timer.log 2>&1 &
 ```
@@ -105,7 +105,7 @@ nohup ~/markdown-general/artifacts/bin/timer \
 
 ```bash
 ps aux | grep -E "(tailie|timer)" | grep -v grep
-ls -la ~/self/foreman/
+ls -la ~/self/yin/
 ```
 
 ---
@@ -127,7 +127,7 @@ This is how yin operates. **Yin stays in the conversation throughout.**
 **Example:**
 
 ```bash
-tail -20 ~/self/foreman/tailie-synthesis.md
+tail -20 ~/self/yin/tailie-synthesis.md
 ```
 
 Output might show: `coord-dense` pattern, meaning system is in coordination phase.
@@ -167,7 +167,7 @@ Output might show: `coord-dense` pattern, meaning system is in coordination phas
 
 **output** ⟜ ✓/✗ + error count
 
-**write-to** ⟜ ~/self/foreman/responses/worker-{id}-result.md
+**write-to** ⟜ ~/self/yin/responses/worker-{id}-result.md
 ```
 
 ### Phase 3: Act ⟜ Spin Task (Bash Execution)
@@ -178,21 +178,21 @@ Yin executes the card immediately via bash, writes result to flows-log.md.
 
 ```bash
 # Example: execute and append
-(echo "$(date +%s) markdown-inventory | $(find ~/markdown-general/work/ -name "*.md" | wc -l) files") >> ~/self/foreman/flows-log.md
+(echo "$(date +%s) markdown-inventory | $(find ~/markdown-general/work/ -name "*.md" | wc -l) files") >> ~/self/yin/flows-log.md
 ```
 
 **For bounded worker cards:**
 
-1. Add entry to foreman-workers.md with unique ID
+1. Add entry to yin-workers.md with unique ID
 2. Execute the task via bash
 3. Worker writes to responses/worker-{id}-result.md
 
 ```bash
 # Record in table
-echo "| 1 | test-build | $(date +%H:%M:%S) | $(date -v+1M +%H:%M:%S) | active | - | spinning now |" >> ~/self/foreman/foreman-workers.md
+echo "| 1 | test-build | $(date +%H:%M:%S) | $(date -v+1M +%H:%M:%S) | active | - | spinning now |" >> ~/self/yin/yin-workers.md
 
 # Execute (this writes to responses/worker-1-result.md)
-bash -c "cd ~/repos/myproject && cabal build > /tmp/worker-1.out 2>&1; echo '✓ SUCCESS' > ~/self/foreman/responses/worker-1-result.md"
+bash -c "cd ~/repos/myproject && cabal build > /tmp/worker-1.out 2>&1; echo '✓ SUCCESS' > ~/self/yin/responses/worker-1-result.md"
 ```
 
 **Stay in conversation.** Don't disappear. The bash executes in this session.
@@ -230,7 +230,7 @@ bash -c "cd ~/repos/myproject && cabal build > /tmp/worker-1.out 2>&1; echo '✓
 
 ```bash
 # Simple example: just append a log entry
-echo "$(date '+[%H:%M:%S]') skip-step executed: split-markdown-batch" >> ~/self/foreman/flows-log.md
+echo "$(date '+[%H:%M:%S]') skip-step executed: split-markdown-batch" >> ~/self/yin/flows-log.md
 ```
 
 Or more complex:
@@ -239,7 +239,7 @@ Or more complex:
 # Execute the actual task
 (cd ~/markdown-general && find . -name "*.md" -exec head -1 {} \; | grep -v '^#' | head -5) | \
 while read line; do
-  echo "[$(date +%s)] concept: $line" >> ~/self/foreman/flows-log.md
+  echo "[$(date +%s)] concept: $line" >> ~/self/yin/flows-log.md
 done
 ```
 
@@ -250,7 +250,7 @@ Tailie will accumulate results in background. Infrastructure handles everything.
 ```bash
 # Don't monitor directly; read synthesis instead
 sleep 2
-tail -5 ~/self/foreman/tailie-synthesis.md
+tail -5 ~/self/yin/tailie-synthesis.md
 ```
 
 ---
@@ -275,7 +275,7 @@ tail -5 ~/self/foreman/tailie-synthesis.md
 **output** ⟜ ✓/✗ + [error count] [warning count]
 ```
 
-**Step 2: Record in foreman-workers.md**
+**Step 2: Record in yin-workers.md**
 
 Add row with unique ID (e.g., worker-3):
 
@@ -290,9 +290,9 @@ Add row with unique ID (e.g., worker-3):
 bash -c "cd ~/repos/numhask-space && cabal clean && cabal build" > /tmp/worker-3.log 2>&1
 RESULT=$?
 if [ $RESULT -eq 0 ]; then
-  echo "✓ Build successful" > ~/self/foreman/responses/worker-3-result.md
+  echo "✓ Build successful" > ~/self/yin/responses/worker-3-result.md
 else
-  echo "✗ Build failed with code $RESULT" > ~/self/foreman/responses/worker-3-result.md
+  echo "✗ Build failed with code $RESULT" > ~/self/yin/responses/worker-3-result.md
 fi
 ```
 
@@ -301,12 +301,12 @@ fi
 When done, check responses/:
 
 ```bash
-cat ~/self/foreman/responses/worker-3-result.md
+cat ~/self/yin/responses/worker-3-result.md
 ```
 
 **Step 5: Update row**
 
-Update foreman-workers.md with actual completion time and status:
+Update yin-workers.md with actual completion time and status:
 
 ```markdown
 | 3 | cabal-build-check | 15:22:01 | 15:23:01 | done | 15:22:45 | ✓ build ok, 0 warnings |
@@ -321,7 +321,7 @@ Update foreman-workers.md with actual completion time and status:
 ### Skip-Step Synthesis (Tailie Output)
 
 ```bash
-tail -20 ~/self/foreman/tailie-synthesis.md
+tail -20 ~/self/yin/tailie-synthesis.md
 ```
 
 You'll see:
@@ -342,7 +342,7 @@ You'll see:
 If running bloodhound:
 
 ```bash
-tail -5 ~/self/foreman/bloodhound-report.md
+tail -5 ~/self/yin/bloodhound-report.md
 ```
 
 You'll see:
@@ -384,7 +384,7 @@ You'll see:
 
 ### Track Observed Times
 
-In foreman-workers.md, record actual completion time:
+In yin-workers.md, record actual completion time:
 
 ```markdown
 | 1 | scan-time | 14:22:01 | 14:22:11 | done | 14:22:03 | ✓ 2s actual, 10s timeout = 5x buffer |
@@ -426,7 +426,7 @@ Check:
 ```bash
 ps aux | grep tailie | grep -v grep
 tail -20 /tmp/tailie.log
-ls -la ~/self/foreman/tailie-synthesis.md
+ls -la ~/self/yin/tailie-synthesis.md
 ```
 
 Restart if needed:
@@ -434,8 +434,8 @@ Restart if needed:
 ```bash
 pkill -f tailie
 nohup ~/markdown-general/artifacts/bin/tailie \
-  --watch ~/self/foreman/flows-log.md \
-  --output ~/self/foreman/tailie-synthesis.md \
+  --watch ~/self/yin/flows-log.md \
+  --output ~/self/yin/tailie-synthesis.md \
   > /tmp/tailie.log 2>&1 &
 ```
 
@@ -447,8 +447,8 @@ Check:
 ps aux | grep timer | grep -v grep
 tail -20 /tmp/timer.log
 
-# Verify foreman-workers.md is readable
-head -5 ~/self/foreman/foreman-workers.md
+# Verify yin-workers.md is readable
+head -5 ~/self/yin/yin-workers.md
 ```
 
 Restart if needed:
@@ -456,8 +456,8 @@ Restart if needed:
 ```bash
 pkill -f timer
 nohup ~/markdown-general/artifacts/bin/timer \
-  --workers ~/self/foreman/foreman-workers.md \
-  --responses ~/self/foreman/responses/ \
+  --workers ~/self/yin/yin-workers.md \
+  --responses ~/self/yin/responses/ \
   --interval 2 \
   > /tmp/timer.log 2>&1 &
 ```
@@ -467,7 +467,7 @@ nohup ~/markdown-general/artifacts/bin/timer \
 For bounded workers, check responses/:
 
 ```bash
-ls -la ~/self/foreman/responses/ | grep worker-{id}
+ls -la ~/self/yin/responses/ | grep worker-{id}
 ```
 
 If no response file exists:
@@ -486,7 +486,7 @@ For skip-step workers:
 - Check: are workers actually running?
 
 **For bounded:**
-- Check foreman-workers.md status column
+- Check yin-workers.md status column
 - Is work marked as "done" or still "active"?
 
 ### Context Ball Overflowing
@@ -551,32 +551,32 @@ When bloodhound detects pattern shift:
 
 ```bash
 # Bootstrap
-mkdir -p ~/self/foreman/{cards,responses,logs}
-touch ~/self/foreman/{foreman-workers.md,yin-notes.md,flows-log.md}
+mkdir -p ~/self/yin/{cards,responses,logs}
+touch ~/self/yin/{yin-workers.md,yin-notes.md,flows-log.md}
 
 # Start tailie (skip-step)
 nohup ~/markdown-general/artifacts/bin/tailie \
-  --watch ~/self/foreman/flows-log.md \
-  --output ~/self/foreman/tailie-synthesis.md > /tmp/tailie.log 2>&1 &
+  --watch ~/self/yin/flows-log.md \
+  --output ~/self/yin/tailie-synthesis.md > /tmp/tailie.log 2>&1 &
 
 # Start timer (bounded)
 nohup ~/markdown-general/artifacts/bin/timer \
-  --workers ~/self/foreman/foreman-workers.md \
-  --responses ~/self/foreman/responses/ \
+  --workers ~/self/yin/yin-workers.md \
+  --responses ~/self/yin/responses/ \
   --interval 2 > /tmp/timer.log 2>&1 &
 
 # Check synthesis
-tail -20 ~/self/foreman/tailie-synthesis.md
+tail -20 ~/self/yin/tailie-synthesis.md
 
 # Append to flows-log (skip-step result)
-echo "[$(date +%s)] task completed" >> ~/self/foreman/flows-log.md
+echo "[$(date +%s)] task completed" >> ~/self/yin/flows-log.md
 
 # Stop agents
 pkill -f tailie
 pkill -f timer
 
 # View working notes
-cat ~/self/foreman/yin-notes.md
+cat ~/self/yin/yin-notes.md
 ```
 
 ---

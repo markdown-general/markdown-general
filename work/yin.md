@@ -6,7 +6,7 @@
 
 ## yin must spin ⟜ The Constraint and Its Implications
 
-**Critical discovery:** Yin cannot background itself or spawn persistent background agents. Foreman cannot be a separate backgrounded entity.
+**Critical discovery:** Yin cannot background itself or spawn persistent background agents. Yin infrastructure cannot be a separate backgrounded entity.
 
 ### What This Means
 
@@ -160,7 +160,7 @@ This is the heartbeat. Yin stays in the conversation and moves through this cycl
 
 **output** ⟜ ✓ + piece count (or writes to flows-log with timestamp)
 
-**append-to** ⟜ ~/self/foreman/flows-log.md (one concept per line)
+**append-to** ⟜ ~/self/yin/flows-log.md (one concept per line)
 ```
 
 **Characteristics:**
@@ -178,7 +178,7 @@ This is the heartbeat. Yin stays in the conversation and moves through this cycl
 
 **How it works:**
 - Write card with explicit input/output/timeout
-- Record in tracking table (~/self/foreman/foreman-workers.md)
+- Record in tracking table (~/self/yin/yin-workers.md)
 - Execute via bash immediately
 - Worker writes to responses/ when done
 - Yin reads result and decides next action
@@ -204,7 +204,7 @@ This is the heartbeat. Yin stays in the conversation and moves through this cycl
 
 **Characteristics:**
 - Worker gets unique ID
-- Track in foreman-workers.md: id | card | spin-time | deadline | status | actual-completion | notes
+- Track in yin-workers.md: id | card | spin-time | deadline | status | actual-completion | notes
 - Worker writes to responses/worker-{id}-result.md (or -timeout.md, -blowup.md)
 - Yin reads response and marks done in table
 - Timing data feeds into future timeout calibration
@@ -219,7 +219,7 @@ Used by skip-step cards. All results flow into one growing file.
 
 **Structure:**
 ```
-~/self/foreman/flows-log.md  ⟜ one concept per line, append-only
+~/self/yin/flows-log.md  ⟜ one concept per line, append-only
 ```
 
 **Example content:**
@@ -293,13 +293,13 @@ Listeners are permanent background processes that read outputs and synthesize.
 
 **type** ⟜ listener / permanent
 
-**monitor** ⟜ ~/self/foreman/flows-log.md (append-only)
+**monitor** ⟜ ~/self/yin/flows-log.md (append-only)
 
 **polling** ⟜ every 3 seconds
 
 **task** ⟜ read new lines, classify by domain, emit synthesis
 
-**output** ⟜ ~/self/foreman/tailie-synthesis.md (timestamped log)
+**output** ⟜ ~/self/yin/tailie-synthesis.md (timestamped log)
 
 **domains** ⟜
 - coord ⟜ foreman, supervisor, worker, field, circuit
@@ -332,13 +332,13 @@ Listeners are permanent background processes that read outputs and synthesize.
 
 **type** ⟜ listener / pattern-aware
 
-**monitor** ⟜ ~/self/foreman/tailie-synthesis.md
+**monitor** ⟜ ~/self/yin/tailie-synthesis.md
 
 **trigger** ⟜ when pattern changes (e.g., balanced → coord-dense)
 
 **task** ⟜ compare current pattern to last seen, report if shift detected
 
-**output** ⟜ ~/self/foreman/bloodhound-report.md (alert only on change)
+**output** ⟜ ~/self/yin/bloodhound-report.md (alert only on change)
 
 **patterns** ⟜
 - **balanced** ⟜ mixed domains flowing (normal)
@@ -417,7 +417,7 @@ Whether skip-step or bounded, cards follow the same shape discipline.
 
 **task** ⟜ find all .md files in codebase, count by directory
 
-**output** ⟜ ~/self/foreman/inventory-result.md (append timestamp + count)
+**output** ⟜ ~/self/yin/inventory-result.md (append timestamp + count)
 ```
 
 **Example: Bounded worker card (full)**
@@ -468,7 +468,7 @@ Yin stays lean. Background infrastructure handles complexity.
 - no polling needed from yin
 
 **timer** ⟜ background process, permanently running (for bounded workers)
-- watches foreman-workers.md deadlines continuously
+- watches yin-workers.md deadlines continuously
 - enforces timeouts on active workers
 - writes timeout reports
 - marks worker as timeout in table
@@ -483,7 +483,7 @@ Yin stays lean. Background infrastructure handles complexity.
 
 ## Working Notes ⟜ Light State Management
 
-Keep a simple notes file alongside foreman-workers.md:
+Keep a simple notes file alongside yin-workers.md:
 
 ```markdown
 # yin-notes ⟜ working state
@@ -552,14 +552,14 @@ You need: Bash, Read(*), Write(*), Glob(*), Grep(*), Edit(*)
 ### 2. Create Directories
 
 ```bash
-mkdir -p ~/self/foreman/cards
-mkdir -p ~/self/foreman/responses
-mkdir -p ~/self/foreman/logs
-touch ~/self/foreman/foreman-workers.md
-touch ~/self/foreman/yin-notes.md
+mkdir -p ~/self/yin/cards
+mkdir -p ~/self/yin/responses
+mkdir -p ~/self/yin/logs
+touch ~/self/yin/yin-workers.md
+touch ~/self/yin/yin-notes.md
 ```
 
-### 3. Initialize foreman-workers.md
+### 3. Initialize yin-workers.md
 
 Only for bounded workers. If using skip-step only, you can skip.
 
@@ -577,8 +577,8 @@ Only for bounded workers. If using skip-step only, you can skip.
 ```bash
 chmod +x ~/markdown-general/artifacts/bin/tailie
 nohup ~/markdown-general/artifacts/bin/tailie \
-  --watch ~/self/foreman/flows-log.md \
-  --output ~/self/foreman/tailie-synthesis.md \
+  --watch ~/self/yin/flows-log.md \
+  --output ~/self/yin/tailie-synthesis.md \
   > /tmp/tailie.log 2>&1 &
 ```
 
@@ -587,8 +587,8 @@ nohup ~/markdown-general/artifacts/bin/tailie \
 ```bash
 chmod +x ~/markdown-general/artifacts/bin/timer
 nohup ~/markdown-general/artifacts/bin/timer \
-  --workers ~/self/foreman/foreman-workers.md \
-  --responses ~/self/foreman/responses/ \
+  --workers ~/self/yin/yin-workers.md \
+  --responses ~/self/yin/responses/ \
   --interval 2 \
   > /tmp/timer.log 2>&1 &
 ```
@@ -597,7 +597,7 @@ nohup ~/markdown-general/artifacts/bin/timer \
 
 ```bash
 ps aux | grep -E "(tailie|timer)" | grep -v grep
-ls -la ~/self/foreman/
+ls -la ~/self/yin/
 ```
 
 ---

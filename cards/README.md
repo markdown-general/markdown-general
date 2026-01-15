@@ -88,10 +88,10 @@ Cards are spun via the yin cycle. Example flow in yin-self.md:
 
 ```bash
 # Spin a flow card (which calls multiple actions internally)
-echo "[$(date +%s)] spinning cleanit for repo X" >> ~/self/foreman/flows-log.md
+echo "[$(date +%s)] spinning cleanit for repo X" >> ~/self/yin/flows-log.md
 
 # Spin an action card directly for adhoc work
-echo "[$(date +%s)] adhoc: cabal update" >> ~/self/foreman/flows-log.md
+echo "[$(date +%s)] adhoc: cabal update" >> ~/self/yin/flows-log.md
 ```
 
 When yin reads synthesis and decides the next action, it either:

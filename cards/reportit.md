@@ -42,7 +42,7 @@ reportit-full-status | [repo] | build: [✓/✗] | tests: [pass/fail] | docs: [c
 
 Also write detailed report to file:
 ```
-~/self/foreman/responses/report-[repo]-full.md
+~/self/yin/responses/report-[repo]-full.md
 ```
 
 Example format:
@@ -111,7 +111,7 @@ Yin reads this signal and decides:
 Yin reads tail of tailie-synthesis.md periodically:
 
 ```bash
-tail -20 ~/self/foreman/tailie-synthesis.md
+tail -20 ~/self/yin/tailie-synthesis.md
 ```
 
 Each line shows:

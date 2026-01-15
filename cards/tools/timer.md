@@ -2,34 +2,34 @@
 
 **timer** ⟜ enforce worker deadlines and write timeout blowup reports
 
-**what it does** ⟜ monitors foreman-workers.md for active workers, kills them at deadline, writes blowup reports
+**what it does** ⟜ monitors yin-workers.md for active workers, kills them at deadline, writes blowup reports
 
-**why** ⟜ prevent orphaned workers hanging forever; provide timeout evidence for foreman analysis
+**why** ⟜ prevent orphaned workers hanging forever; provide timeout evidence for yin analysis
 
-**who** ⟜ foreman infrastructure, spawned after listener at session start
+**who** ⟜ yin infrastructure, spawned after listener at session start
 
 ## example
 
 ```bash
-# Start timer monitoring ~/self/foreman/foreman-workers.md
-timer --workers ~/self/foreman/foreman-workers.md --responses ~/self/foreman/responses/
+# Start timer monitoring ~/self/yin/yin-workers.md
+timer --workers ~/self/yin/yin-workers.md --responses ~/self/yin/responses/
 
-# In foreman-workers.md, mark worker as active:
+# In yin-workers.md, mark worker as active:
 # | 1 | scan-task | 14:22:01 | 14:22:11 | active | | |
 
 # At 14:22:11, timer detects deadline passed
-# Writes: ~/self/foreman/responses/worker-1-blowup.md
-# Updates foreman-workers.md: status → "timeout", actual-completion → 14:22:11
+# Writes: ~/self/yin/responses/worker-1-blowup.md
+# Updates yin-workers.md: status → "timeout", actual-completion → 14:22:11
 ```
 
 ## api
 
 **Arguments:**
-- `--workers FILE` ⟜ path to foreman-workers.md table (required)
+- `--workers FILE` ⟜ path to yin-workers.md table (required)
 - `--responses DIR` ⟜ directory for blowup report files (required)
 - `--interval SECONDS` ⟜ check interval in seconds (default: 2)
 
-**foreman-workers.md format:**
+**yin-workers.md format:**
 ```
 | id | card | spin-time | timeout-deadline | status | actual-completion | notes |
 |----|------|-----------|------------------|--------|-------------------|-------|
@@ -41,7 +41,7 @@ timer --workers ~/self/foreman/foreman-workers.md --responses ~/self/foreman/res
 - Updated table ⟜ worker status changed to "timeout", actual-completion set to enforcement time
 
 **Behavior:**
-- Parses foreman-workers.md table every `--interval` seconds
+- Parses yin-workers.md table every `--interval` seconds
 - For each worker with status "active":
   - Compares current time to timeout-deadline
   - If deadline passed: writes blowup report, updates table
@@ -65,15 +65,15 @@ timer --help
 
 ## tips
 
-**Clock alignment** ⟜ timer uses system clock. Foreman and timer must be on same machine for deadline matching to work.
+**Clock alignment** ⟜ timer uses system clock. Yin and timer must be on same machine for deadline matching to work.
 
 **Table parsing** ⟜ timer expects strict markdown table format. Missing pipe characters or misaligned columns will cause parse failures. Validate table format before spinning timer.
 
-**Blowup report is evidence** ⟜ contains worker id, card name, deadline, enforcement time. Foreman can analyze this to refine timeout estimates for next session.
+**Blowup report is evidence** ⟜ contains worker id, card name, deadline, enforcement time. Yin can analyze this to refine timeout estimates for next session.
 
 **idempotent enforcement** ⟜ timer tracks killed workers by id to avoid re-killing. If workers table is cleared between sessions, idempotency is lost (design limitation).
 
-**Status update is non-atomic** ⟜ timer reads table, decides to enforce, writes blowup, updates table. If foreman updates table simultaneously, race conditions possible. In practice, foreman doesn't modify table during enforcement.
+**Status update is non-atomic** ⟜ timer reads table, decides to enforce, writes blowup, updates table. If yin updates table simultaneously, race conditions possible. In practice, yin doesn't modify table during enforcement.
 
 ## status
 
@@ -86,7 +86,7 @@ timer --help
 ```python
 #!/usr/bin/env python3
 """
-Timer Agent - Enforce worker deadlines by monitoring foreman-workers.md.
+Timer Agent - Enforce worker deadlines by monitoring yin-workers.md.
 Runs continuously and checks every 2 seconds for workers that have exceeded their timeout deadline.
 """
 
@@ -126,7 +126,7 @@ def get_current_time():
     return datetime.now()
 
 def parse_workers_table(workers_file):
-    """Parse the foreman-workers.md file and extract worker data"""
+    """Parse the yin-workers.md file and extract worker data"""
     workers = []
 
     try:
@@ -207,7 +207,7 @@ The worker exceeded its timeout deadline and has been marked as timed out.
         return False
 
 def update_worker_status(workers_file, worker_id):
-    """Update worker status in foreman-workers.md from 'active' to 'timeout'"""
+    """Update worker status in yin-workers.md from 'active' to 'timeout'"""
     try:
         with open(workers_file, 'r') as f:
             content = f.read()
@@ -275,7 +275,7 @@ def check_and_enforce_deadlines(workers_file, responses_dir, log_file=None):
 def main():
     """Main loop - runs indefinitely"""
     parser = argparse.ArgumentParser(description="Enforce worker deadlines")
-    parser.add_argument('--workers', required=True, help='Path to foreman-workers.md')
+    parser.add_argument('--workers', required=True, help='Path to yin-workers.md')
     parser.add_argument('--responses', required=True, help='Directory for blowup reports')
     parser.add_argument('--interval', type=int, default=2, help='Check interval in seconds')
     parser.add_argument('--log', help='Log file for messages')
@@ -316,7 +316,7 @@ if __name__ == "__main__":
 Enforce deadlines for all active workers:
 
 ```bash
-timer --workers ~/self/foreman/foreman-workers.md --responses ~/self/foreman/responses/
+timer --workers ~/self/yin/yin-workers.md --responses ~/self/yin/responses/
 ```
 
 ### with logging
@@ -324,7 +324,7 @@ timer --workers ~/self/foreman/foreman-workers.md --responses ~/self/foreman/res
 Log enforcement actions:
 
 ```bash
-timer --workers ~/self/foreman/foreman-workers.md --responses ~/self/foreman/responses/ --log /tmp/timer.log
+timer --workers ~/self/yin/yin-workers.md --responses ~/self/yin/responses/ --log /tmp/timer.log
 ```
 
 ### faster enforcement
@@ -332,7 +332,7 @@ timer --workers ~/self/foreman/foreman-workers.md --responses ~/self/foreman/res
 Check every 1 second instead of 2:
 
 ```bash
-timer --workers ~/self/foreman/foreman-workers.md --responses ~/self/foreman/responses/ --interval 1
+timer --workers ~/self/yin/yin-workers.md --responses ~/self/yin/responses/ --interval 1
 ```
 
 ## tests
@@ -345,7 +345,7 @@ Verify timer detects expired deadlines:
 # Create test structure
 mkdir -p /tmp/timer-test/responses
 cat > /tmp/timer-test/workers.md << 'EOF'
-# foreman-workers
+# yin-workers
 
 | id | card | spin-time | timeout-deadline | status | actual-completion | notes |
 |----|------|-----------|------------------|--------|-------------------|-------|

@@ -4,18 +4,18 @@
 
 **what it does** ⟜ watches a responses/ directory and pings a log file when new worker callbacks arrive
 
-**why** ⟜ foreman needs non-blocking notification of field worker completion without polling foreman-workers.md
+**why** ⟜ yin needs non-blocking notification of field worker completion without polling yin-workers.md
 
-**who** ⟜ foreman infrastructure, spawned at session start
+**who** ⟜ yin infrastructure, spawned at session start
 
 ## example
 
 ```bash
-# Start listener monitoring ~/self/foreman/responses/, write pings to ~/self/foreman/listener-pings.md
-listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md
+# Start listener monitoring ~/self/yin/responses/, write pings to ~/self/yin/listener-pings.md
+listener --watch ~/self/yin/responses/ --log ~/self/yin/listener-pings.md
 
 # In another terminal, create a worker callback
-echo "# Worker 1 Result" > ~/self/foreman/responses/worker-1-result.md
+echo "# Worker 1 Result" > ~/self/yin/responses/worker-1-result.md
 
 # listener detects it and writes to listener-pings.md:
 # [11:52:14] worker-X callback: worker-1-result.md
@@ -64,7 +64,7 @@ listener --help
 
 **Pattern matching** ⟜ default pattern only matches worker callbacks (worker-*-result.md, worker-*-blowup.md, worker-*-timeout.md). Custom patterns can match any glob.
 
-**Directory must exist** ⟜ listener won't create the watch directory. Foreman must ensure responses/ exists before spinning listener.
+**Directory must exist** ⟜ listener won't create the watch directory. Yin must ensure responses/ exists before spinning listener.
 
 ## status
 
@@ -178,10 +178,10 @@ done
 
 ### basic deployment
 
-Monitor foreman responses directory:
+Monitor yin responses directory:
 
 ```bash
-listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md
+listener --watch ~/self/yin/responses/ --log ~/self/yin/listener-pings.md
 ```
 
 ### custom pattern
@@ -189,7 +189,7 @@ listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.m
 Monitor only result files, ignore blowups:
 
 ```bash
-listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md --pattern "worker-*-result.md"
+listener --watch ~/self/yin/responses/ --log ~/self/yin/listener-pings.md --pattern "worker-*-result.md"
 ```
 
 ### faster polling
@@ -197,7 +197,7 @@ listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.m
 Check more frequently:
 
 ```bash
-listener --watch ~/self/foreman/responses/ --log ~/self/foreman/listener-pings.md --interval 1
+listener --watch ~/self/yin/responses/ --log ~/self/yin/listener-pings.md --interval 1
 ```
 
 ## tests

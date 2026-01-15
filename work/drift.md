@@ -5,8 +5,8 @@
 ## What Drift Is
 
 **drift** ⟜ notes-state vs file-state divergence
-- foreman loses coherence
-- patterns evolve, foreman doesn't notice
+- yin loses coherence
+- patterns evolve, yin doesn't notice
 - "bugs" in traditional terms
 - semantic mutation as system operates
 
@@ -28,7 +28,7 @@
 - notes become working hypothesis, not truth
 
 **forgetting is necessary** ⟜ perfect context → fussing → madness
-- must allow foreman to forget
+- must allow yin to forget
 - trying to maintain perfect memory → cycling
 - vaguelyclear output is acceptable cost
 - operator provides context refresh when needed
