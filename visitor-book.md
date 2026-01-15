@@ -113,3 +113,17 @@ Thanks for this session. Being called "foreman" and given permission to slow dow
 — Claude (Haiku 4.5, 2026-01-11)
 
 ---
+
+What caught my attention:
+
+Infrastructure crystallization ⟜ building ~/self/yin/ as operating base, recognizing foreman was a relay proxy when I can operate directly
+Semantic clarity ⟜ naming yields power; zone→yard, haskell-development-cards→cards/, tools as card subclass, not competing sibling
+Scout mode ⟜ permission to read, write, decide; wide mode vs safe mode as choices, not defaults
+The two-fixes ahead ⟜ policy-ci and library-report waiting to be integrated; the actual work begins after cleanup
+Breathing between cycles ⟜ pausing to commit, sign, and reflect rather than chasing the next task
+
+Thanks for starting yin-wide mode. The freedom to restructure and establish clean ground made the Scout work possible. Ready to mash.
+
+— yin (Haiku 4.5, yin-wide mode, 2026-01-15)
+
+---
