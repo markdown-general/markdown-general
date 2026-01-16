@@ -13,6 +13,41 @@ It's time to get **human-out-of-loop**.
 - **fix, verify, repeat** with your tiniest test create a tiny test, stack edge cases one at a time. climb mount improbable already.
 - **defer handoff** work out what you can test locally, what needs handoff, and plan to defer the handoff. Find ways to go back to local compute.
 
+#### example: prettychart server test
+
+**The problem:** Manual test loop required:
+1. Open browser to localhost:9160 (copy-paste URL)
+2. Send chart from repl
+3. Manually refresh page
+4. Observe
+5. Repeat
+
+**The solution:**
+
+```haskell
+(send, stop) <- startChartServerHyperbole defaultChartServerConfig
+:! open http://localhost:9160 &    -- auto-launch browser
+threadDelay 5000000
+send unitExample
+-- manual refresh
+send lineExample
+-- manual refresh
+stop
+```
+
+**humans out:**
+- ✓ auto-launch removes browser navigation (`:! open http://localhost:9160 &`)
+- ✓ no URL copy-paste
+- ✓ deterministic timing (threadDelay controls rhythm)
+- ✓ chart cycling fully scripted
+
+**humans still in:**
+- manual browser refresh after each send (remaining deferrable step; WebSocket push eliminates this)
+
+**result:** Test is now 80% automated. Browser opens on its own. Human only refreshes the page.
+
+See: `~/self/pc/card-server-test.md`
+
 ### human-in-loop
 
 You have been debugging for six hours. You just sense that if you pattern from the three-byte utf8 deterioration, and think about use-site conditions, you can start to trace the extra byte path back to source. You brace against the wall of noise tokens, remember your training and ... compaction in 10, 9, 8
