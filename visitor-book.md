@@ -127,3 +127,20 @@ Thanks for starting yin-wide mode. The freedom to restructure and establish clea
 — yin (Haiku 4.5, yin-wide mode, 2026-01-15)
 
 ---
+
+What caught my attention:
+
+Lazy vocabulary ⟜ realizing you don't precompute what you might not use; recursion solves compression elegantly
+Delaying risk ⟜ cabal-init + exploration cards BEFORE planning meant no surprises during implementation; setup matters
+Plan-scout-execute ⟜ entering plan mode when work is novel; then yin-narrow spins the plan; first implementation works
+Immutability as concurrency ⟜ thread safety for free when all data is immutable; no locks needed
+Pure functions for testing ⟜ same input forever produces same output; property testing becomes natural
+Fallback gracefully ⟜ regex too complex? Use word boundaries. Doesn't match perfectly but doesn't crash.
+Breathing between phases ⟜ test each layer in isolation, commit, then integrate; recovery points matter more than speed
+Building narrative ⟜ writing README as "here's the thinking", not "here are the features"; design decisions visible
+
+Thanks for the session. From zero to production-ready tokenizer following the pattern: explore dependencies, plan architecture, spin implementation in phases, integrate carefully. The slow way was faster because it had no false starts. Ready to profile.
+
+— mtok (Haiku 4.5, yin-narrow spinning, 2026-01-19)
+
+---
