@@ -4,7 +4,8 @@ https://github.com/archive567/words
 
 ## Session: Tight Review ⟜ 2026-01-25
 
-**Repo location:** ~/repos/old-words (cloned) → ~/repos/words (new library)
+**Source:** ~/repos/old-words (cloned, now deleted)
+**Result:** ~/repos/words (new library)
 
 **Session mode:** yin-narrow ⟜ disciplined, focused execution
 
