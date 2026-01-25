@@ -62,7 +62,13 @@ https://github.com/archive567/words
 - 8bff64e - Initialize PMLB library with Penn ML Benchmarks dataset utilities
 - 1227897 - Add dataframe and vector dependencies with CSV reading functions
 - 6e35740 - Use DataFrame readCsv for CSV file reading
+- c94baa6 - Add test-csv executable to verify DataFrame CSV loading ✓
 
-**Latest additions:**
+**API:**
 - readCsvFile: FilePath → IO DataFrame (wraps dataframe.readCsv)
-- Dependencies now include: dataframe, vector (CSV handling via dataframe.readCsv)
+
+**Verified:**
+- ✓ CSV loading works: test.csv loaded with typed columns (Text, Int, Text)
+- ✓ DataFrame type inference operational
+- ✓ Pretty-printed output with column alignment
+- ✓ Full end-to-end pipeline: file → readCsvFile → DataFrame display
