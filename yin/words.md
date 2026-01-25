@@ -58,4 +58,11 @@ https://github.com/archive567/words
 
 **Key deps:** cassava (CSV), streaming, managed, numhask-space, lens, text, bytestring
 
-**Commit:** 8bff64e - Initialize PMLB library with Penn ML Benchmarks dataset utilities
+**Commits:**
+- 8bff64e - Initialize PMLB library with Penn ML Benchmarks dataset utilities
+- 1227897 - Add dataframe and vector dependencies with CSV reading functions
+
+**Latest additions:**
+- readCsvFile: FilePath → IO (Vector (Vector Text))
+- readCsvStream: ByteString m r → Stream (Of (Vector Text)) m ()
+- Dependencies now include: dataframe, vector (CSV handling via dataframe methods)
