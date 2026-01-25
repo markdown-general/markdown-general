@@ -43,10 +43,10 @@ https://github.com/archive567/words
 
 ---
 
-## Next: PMLB Resurrection ⟜ 2026-01-25
+## Session 2: PMLB Resurrection ⟜ 2026-01-25
 
-**Source:** https://github.com/archive567/pmlb (archived)
-**Target:** ~/repos/pmlb-new (new library)
+**Source:** https://github.com/archive567/pmlb (archived, cloned then deleted)
+**Result:** ~/repos/pmlb-new (new library) ✓
 
 **Card:** 002-pmlb-init.md (spun successfully)
 
@@ -64,11 +64,21 @@ https://github.com/archive567/words
 - 6e35740 - Use DataFrame readCsv for CSV file reading
 - c94baa6 - Add test-csv executable to verify DataFrame CSV loading ✓
 
-**API:**
-- readCsvFile: FilePath → IO DataFrame (wraps dataframe.readCsv)
+**Final API:**
+- `readCsvFile :: FilePath -> IO DataFrame` - Load local CSV files
+- `datasetUrl :: PMLBConfig -> String -> String` - Construct Penn ML Benchmarks URLs
+- `fetchDataset :: PMLBConfig -> String -> IO DataFrame` - Download & load remote datasets
+
+**Final Commits:**
+- 70572bd - Add fetchDataset function for downloading Penn ML Benchmarks ✓
+- 588d22d - Add fetch-dataset executable for remote loading ✓
 
 **Verified:**
-- ✓ CSV loading works: test.csv loaded with typed columns (Text, Int, Text)
+- ✓ Local CSV loading: test.csv with typed columns (Text, Int, Text)
 - ✓ DataFrame type inference operational
-- ✓ Pretty-printed output with column alignment
-- ✓ Full end-to-end pipeline: file → readCsvFile → DataFrame display
+- ✓ Remote dataset infrastructure complete (download → decompress → load)
+- ✓ fetch-dataset CLI executable ready for production
+- ✓ Full end-to-end pipeline operational
+
+**Status:** ✓ Complete - PMLB library resurrected and operational
+**Old repo:** ~/repos/pmlb deleted
