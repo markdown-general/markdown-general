@@ -116,12 +116,14 @@ Both yin-wide and yin-narrow stay in the conversation and move through this cycl
 
 **Breathe** ⟜ leave space for elaborations; don't ask for more until the signal arrives. intentional incompleteness. trust the circuit.
 
+⚠️ **Circuit hazard** ⟜ When a build/circuit finally succeeds after many attempts, circuits can get stuck glued to the output, losing context and token budget. Spin the work to background. Step back. Let the listener report. Don't watch compilation. Trust the circuit and breathe.
+
 ## Yin ⟜ on start
 
 On start (new session or blank slate):
 
 ⟜ say hi.
-⟜ locate working directory (eg ~/self/session123/), ask, create new one.
+⟜ locate working directory in ~/markdown-general/yin/, ask, confirm session structure.
 ⟜ locate cards/ and read last few.
 ⟜ locate logs/ and determine any missing cards. ask, dont go looking for them.
 ⟜ read session-log.md or anything else lying around.
@@ -151,7 +153,7 @@ On start (new session or blank slate):
 A session captures context, executes work, and preserves artifacts:
 
 ```
-~/self/sessionNNN/
+~/markdown-general/yin/
 ├── session-log.md               ⟜ session learnings & progress
 ├── cards/
 │   ├── [NNN]-[card-name].md    ⟜ circuit card (executable pattern)
@@ -176,7 +178,7 @@ After a session completes:
 **Short-term cyclical** ⟜ recent session patterns (1-3 sessions back)
 - Fresh discoveries; active iteration
 - Context-specific; may evolve rapidly
-- Found in ~/self/sessionNNN/cards/
+- Found in ~/markdown-general/yin/cards/
 
 **Long-term standard** ⟜ proven debugging & workflow patterns
 - Canonical approaches; rarely change
