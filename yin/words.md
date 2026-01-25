@@ -40,3 +40,22 @@ https://github.com/archive567/words
 - ~/repos/words/.gitignore and cabal.project (allow-newer rules)
 
 **Commit:** 7899d12 - Initialize words library with streaming word count functions
+
+---
+
+## Next: PMLB Resurrection ⟜ 2026-01-25
+
+**Source:** https://github.com/archive567/pmlb (archived)
+**Target:** ~/repos/pmlb-new (new library)
+
+**Card:** 002-pmlb-init.md (spun successfully)
+
+**Status:** ✓ Complete
+
+**Result:** ~/repos/pmlb-new (library only)
+
+**Exports:** SetType (Classification | Regression), PMLBConfig, defaultPMLBConfig
+
+**Key deps:** cassava (CSV), streaming, managed, numhask-space, lens, text, bytestring
+
+**Commit:** 8bff64e - Initialize PMLB library with Penn ML Benchmarks dataset utilities
