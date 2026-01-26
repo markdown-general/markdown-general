@@ -4,9 +4,6 @@ cabal.project addition write-ghc-environment-files: always
 
 When you or I are changing Haskell files:
 
-- make sure `ghcid --command="cabal repl" --outputfile=ghcid.txt` is running
-- check the tail of ghcid.txt and ask to fix any errors, or mash for auto-fix.
-
 ## ghc environment files
 
 Warning: Installing libraries with `cabal install --lib` creates a global GHC environment file that can confuse other tools.
@@ -30,10 +27,3 @@ cabal install --lib <packages...> --package-env .
 
 This creates the file in the current directory instead of globally.
 
-## mcp-server
-
-https://hackage.haskell.org/package/mcp
-
-https://hackage.haskell.org/package/mcp-server
-
-https://github.com/m4dc4p/claude-hls

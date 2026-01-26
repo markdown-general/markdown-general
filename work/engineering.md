@@ -24,19 +24,3 @@
 - flag expensive operations ⟜ builds, doctests, full repo scans
 - suggest caching strategy ⟜ write results to lookup file
 
-**field workers** ⟜ semantic palette for lowest level agents
-- spinners ⟜ spun up, ephemeral, lightweight
-- gremlins ⟜ mischievous, can cause chaos if unbounded
-- fairies ⟜ magical helpers, flutter around doing small tasks
-- sparks ⟜ brief flash of energy, quick action then gone
-- circuits ⟜ complete a loop, return signal
-- collective noun ⟜ field workers (think in the field, have agency in domain)
-- opens alternatives ⟜ supes invent their own awesome design metaphors
-
-**supe functions** ⟜ superego oversight of foreman
-- edit the tape ⟜ decide what foreman is allowed to know
-- observe foreman madness ⟜ watch for breakdown patterns
-- rewrite foreman patterns ⟜ upgrade the foreman itself
-- hold conversations human needs ⟜ access point for the dude in charge
-- outside context problem ⟜ foreman knows supe exists but operates with confidence anyway
-

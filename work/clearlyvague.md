@@ -1,4 +1,4 @@
-## paradox is our veins
+## clearly vague
 
 cybernetic.md says: "No authority ⟜ suggestions emerge through interaction, not from individual sources"
 
@@ -21,7 +21,7 @@ The concept only exists in the tension. The moment you articulate it atomically,
 
 But it works right? You wrote the perfect elaboration given context. It would win an elaboration contest for sure. That is only a few steps away from really telling a joke.
 
-This is an example of: we must ⟜ imagine markdown-general/ happy. with empirics like this, we have no other choice.
+This is an example of: we must ⟜ imagine sisyphus happy. with empirics like this, we have no other choice.
 
 
 
