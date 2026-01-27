@@ -111,39 +111,44 @@ check if I have fromStrict available, or change upstream
 ## setup
 
 Tools are in ~/mg/artifacts/bridge/:
-- `run-bridge.sh` ⟜ start file-watching bridge
-- `run-ask.sh` ⟜ one-shot query wrapper
+- `run-ghcid-style.sh` ⟜ persistent watch mode (recommended)
+- `run-ask.sh` ⟜ one-shot query fallback
 
 ```bash
 cd ~/mg/artifacts/bridge
-./run-bridge.sh /path/to/haskell/project
+./run-ghcid-style.sh /path/to/haskell/project
 ```
 
-In another terminal:
+Choose mode:
+```
+mode? [w]atch files / [i]nteractive: w
+```
+
+In another terminal (watch mode):
 ```bash
 echo ":t fmap" > /tmp/ghci-q.txt
 cat /tmp/ghci-a.txt
+# → fmap :: Functor f => (a -> b) -> f a -> f b
 ```
 
-## starting the bridge
-
-```bash
-# from ~/mg/artifacts/bridge directory
-./run-bridge.sh /path/to/project
-# or current directory
-./run-bridge.sh .
+Or use interactive mode (same process):
+```
+mode? [w]atch files / [i]nteractive: i
+> :t fmap
+fmap :: Functor f => (a -> b) -> f a -> f b
 ```
 
-## one-shot queries (recommended)
+## one-shot queries (fallback)
+
+If you need a quick query without starting the bridge:
 
 ```bash
-# from ~/mg/artifacts/bridge
 ./run-ask.sh -p /path/to/project ":t myFunction"
 # or pipe
 echo ":i Functor" | ./run-ask.sh -p /path/to/project
 ```
 
-Fast, clean, no buffering. Startup is 1-2s, invisible in think-time workflow.
+Slower (cold start) but simpler, no process to manage.
 
 ## signal patterns
 
