@@ -117,3 +117,8 @@ Both can be wrong. When they are, the conversation fixes it. The card gets rewri
 
 That's how the library stays honest.
 
+## cards are our memory
+
+⟜ cards are the persistence layer, not the conversation
+
+The conversation is ephemeral. The cards survive. Yin reads the card, spins it, reports, clears. The learning lives in the library, not in yin's head.

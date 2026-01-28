@@ -1,72 +1,38 @@
 # drift: GHCi echo behavior with piped input
 
-## what we found
+## the difference
 
-**Design assumption:** When you send a query to GHCi, it echoes the command back, then the response.
-
-Example (from mock-repl):
+**Mock-repl (terminal behavior):** Echoes commands back.
 ```
 Prelude> :t fmap
 fmap :: Functor f => (a -> b) -> f a -> f b
 ```
 
-**Reality:** When input is piped to GHCi (via stdin), it does NOT echo the command. It only shows the response and the prompt.
-
-Example (real cabal repl):
+**Real cabal repl (piped input):** Does NOT echo commands. Shows only response.
 ```
 ghci> fmap :: Functor f => (a -> b) -> f a -> f b
 ```
 
-## why it matters
+## implication for query protocol
 
-The observer pattern said:
-- Write query
-- Read output
-- **Search for query echo + expected pattern**
-- Extract response
-
-When GHCi doesn't echo piped input, the observer can't find the query echo. It times out.
-
-## what changed
-
-**Before:** Observer looked for BOTH query echo AND response pattern.
-
+Initial approach: search for both query echo AND expected pattern.
 ```bash
-if grep -q "$QUERY" "$OUTPUT" && grep -q "$EXPECT" "$OUTPUT"; then
-  # found it
-fi
+grep "$QUERY" "$OUTPUT" && grep "$EXPECT" "$OUTPUT"
 ```
 
-**After:** Observer looks for response pattern ONLY.
-
+Revised approach: search for expected pattern only.
 ```bash
-if grep -q "$EXPECT" "$OUTPUT"; then
-  # found it
-fi
+grep "$EXPECT" "$OUTPUT"
 ```
 
-This works because queries are sent sequentially. By the time we're polling for the first query's response, no other responses are in the file yet. So if we see `fmap ::`, we know it's the response to `:t fmap`.
+Works because queries are sent sequentially. If we see `fmap ::`, we know it's a response to a type query. No ambiguity.
 
-## protocol still holds
+## why this matters
 
-The core insight remains:
-- Write query to file
-- Wait
-- Read output
-- Search for expected pattern
-- Move to next query
-
-The difference: we search for the response pattern, not the command echo. The file-based protocol is **robust** because the observer doesn't need to know how the backend processes input. It only needs to know what the response looks like.
-
-## mock vs. real
-
-Mock-repl was designed to echo commands (like GHCi REPL in a terminal). Real cabal repl pipes input, doesn't echo. Both work with the same observer—just the search pattern changed.
-
-This is why testing with mock first was valuable. We verified the protocol. Then reality adjusted one detail. The protocol absorbed the adjustment.
+The protocol is **robust to backend differences**. Mock and real cabal repl work with the same query code—only the search pattern changes. This shows the file-based approach absorbs environmental variation without requiring protocol changes.
 
 ## next
 
-1. Observer pattern is proven with both mock and real cabal repl
-2. The file-based message passing works
-3. Next step: wrap this into a Haskell library (repl-startup, queryRepl)
-4. Use it for agentic type wrangling
+- Protocol verified with both mock and real backends
+- Ready to wrap into Haskell library (startRepl, queryRepl)
+- File-based message passing is the foundation

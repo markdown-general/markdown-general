@@ -131,4 +131,4 @@ cabal repl
 
 Clean build. No dependencies beyond base + process. One module. Ready to add functions.
 
-Once this builds, use repl-session-start to wire queries and explore System.Process signatures.
+Once this builds, ready to implement startRepl and queryRepl functions for wrapping the file-based protocol.

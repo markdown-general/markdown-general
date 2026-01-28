@@ -1,0 +1,36 @@
+=== REPL SESSION START ===
+Timestamp: Wed 28 Jan 2026 13:05:05 AEST
+Project: /Users/tonyday567/repos/hyp1
+Session name: demo
+Log: /Users/tonyday567/mg/yin/logs/session-20260128-130505-demo.log
+
+repl-startup: spawning cabal repl
+  project: /Users/tonyday567/repos/hyp1
+  stdin:  /tmp/ghci-in.txt
+  stdout: /tmp/ghci-out.txt
+  stderr: /tmp/ghci-err.txt
+REPL PID: 10155
+  PID: 10160
+Session file: /Users/tonyday567/mg/yin/logs/session-20260128-130505-demo.log
+Query: :t fmap
+Response: Build profile: -w ghc-9.14.1 -O1
+In order, the following will be built (use -v for more details):
+ - hyp1-0.1.0.0 (interactive) (lib) (first run)
+Preprocessing library for hyp1-0.1.0.0...
+GHCi, version 9.14.1: https://www.haskell.org/ghc/  :? for help
+Loaded GHCi configuration from /Users/tonyday567/repos/dotfiles/ghci/.ghci
+[1 of 2] Compiling FileEcho         ( src/FileEcho.hs, interpreted )[hyp1-0.1.0.0-inplace]
+[2 of 2] Compiling Hyp              ( src/Hyp.hs, interpreted )[hyp1-0.1.0.0-inplace]
+Ok, two modules loaded.
+Query: :k Maybe
+Response: Maybe :: * -> *
+Query: :t run
+Response: run :: Hyp a a -> a
+Query: :t base
+Response: base :: a -> Hyp a a
+Query: :k Hyp
+Response: Hyp :: * -> * -> *
+
+=== REPL SESSION STOP ===
+Timestamp: Wed 28 Jan 2026 13:08:10 AEST
+
