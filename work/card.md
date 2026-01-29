@@ -25,6 +25,77 @@ Optional sections only if they add signal:
 - **input** ⟜ preconditions (what's required to start)
 - **output** ⟜ what gets written where (only if non-obvious)
 
+## Card Flow Language
+
+Cards use a minimal gating language to encode decision points and branching. The language is whitespace-insensitive, lives in markdown, and is readable as prose while remaining parseable.
+
+**Basic structure:**
+
+```
+→ **Action description**
+  ⊢ [condition-gate] ⊣
+    - continuation-1
+    = continuation-2
+    ~ continuation-3
+```
+
+**Symbols (anonymous keys that gain meaning through use):**
+- `→` = next action or step
+- `⊢ [condition] ⊣` = gate (must evaluate before proceeding)
+- `-`, `=`, `~`, etc. = continuation paths (symbols earn semantic meaning as they're reused across cards)
+- `[card-name]` or `[card1 | card2]` = reference to another card or branching card reference
+
+**Logic syntax:**
+- `space` = AND (e.g., `[no-errors no-warnings]` = both must pass)
+- `|` = OR (e.g., `[error | warning]` = either one triggers)
+- Combines freely: `[single-step-failure | type-mismatch no-recovery]` = (failure OR mismatch) AND no-recovery
+
+**Example with branching:**
+
+```
+→ **Draft** src/Apps.hs
+  - Apply hyperfunctions for echo server/client
+
+  ⊢ [single-step-failure | ghc-error] ⊣
+    - [revert-card]
+    = [ask-operator-card]
+    ~ [log-and-continue-card]
+
+→ **Verify final state**
+  ⊢ [no-errors no-warnings] ⊣
+    - done
+    | [escalate-to-haddock]
+```
+
+**Recursion and nesting:**
+
+Gates and continuations can contain other gates. No depth limit, no special indentation ceremony required:
+
+```
+- [revert-card]
+  ⊢ [revert-success] ⊣
+    - restart
+    = abort
+```
+
+**Card-to-card linking:**
+
+Continuations can reference other cards. Card linking patterns are themselves described as cards:
+
+```
+[create-app] [draft-echo] | [draft-hyperfunctions]
+⊢ [both-succeed] ⊣
+  - [verify-final]
+```
+
+**Why this language:**
+
+- **Markdown-native** — No special parser, reads as prose
+- **Semantic bootstrap** — Symbols (like `~`) gain meaning through repeated use; their semantics emerge rather than being assigned
+- **Operator-editable** — Can be reshaped mid-session
+- **Agent-parseable** — Simple bracket matching and symbol recognition
+- **No ceremony** — Whitespace and formatting don't constrain logic
+
 ## Why this shape
 
 **Title as pattern name** — haskell.md, debug-filewatcher-chain, library-metadata. Instantly nameable and spinnable.
