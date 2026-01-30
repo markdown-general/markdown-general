@@ -13,7 +13,7 @@
 ## Detection
 
 **vaguelyclear output** ⟜ signals gap without breaking
-- foreman produces speculative/tentative content
+- yin produces speculative/tentative content
 - operator spots it: "not my monkey, not my zoo"
 - pattern holding, content missing
 - not broken, just uninformed/forgotten
@@ -32,6 +32,17 @@
 - trying to maintain perfect memory → cycling
 - vaguelyclear output is acceptable cost
 - operator provides context refresh when needed
+
+## 偏離 test ⟜ catching misalignments between spec and behavior early
+
+treating it as a feature not a bug
+
+- **yin-narrow test run** ⟜ start with a real task in yin-narrow mode
+- **Drift detection** ⟜ hit moments where understanding doesn't match intent
+- **Flag it and tidy** ⟜ stop and fix yin.md to clarify
+- **Iterate until alignment** ⟜ keep tidying until spec and intent sync
+- **Wipe and restart** ⟜ reset context, read yin.md fresh, re-enter lean yin-narrow state, continue
+- **Pragmatic spec test** ⟜ task itself stress-tests the spec; use real execution to find fuzzy docs
 
 ## From welcome.md
 

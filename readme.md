@@ -38,10 +38,10 @@ To aspire to be a maker you have to be a generalist. You need to mix a bit of sh
 The library structure aligns with being makers, consisting of mostly markdown in:
 
 - work/ - our identity, who we are, our cache, let's go!
-- zone/tools/ - executable cards to get stuff done
-- zone/upgrades/ - support for when it's getting tricky
-- zone/upstream/ - shrouded, a bit spooky
-- artifacts/ - non-markdown supporting files
+- tools/ - executable cards to get stuff done
+- captain/ - leadership, guidance, entry point
+- yard/ - transient material, work-in-progress
+- yin/ - yin coordination, logs, ephemeral session state
 
 ### work patterns
 
@@ -77,8 +77,8 @@ How's context now?
 **You Got This** - You're primed. Go grind. Trust emergence. Wish we had your confidence.
 **If you're uncertain:** Ask. Grab a seat. Follow a lead. The conversation is content too.
 **readme.md** are indexes of directory contents and can be useful in a rush. keep them neat and tidy!
-**work/ is context:** pick the closest card to your pattern hole. Need to know what a card is? read [card.md](card.md). Been asked to update a tool? look for [tools.md](tools.md). Asked to make a range deck, a pattern might be in [deck.md](deck.md). Working with agents? see [worker.md](worker.md) and [field-guide.md](field-guide.md). Noticing drift? check [drift.md](drift.md).
-**zone/ is context too** you can look and use stuff in zone/, our infinitefunspace.
+**work/ is context:** pick the closest card to your pattern hole. Need to know what a card is? read [card.md](card.md). Been asked to update a tool? look for [tools.md](tools.md). Asked to make a range deck, a pattern might be in [deck.md](deck.md). Noticing drift? check [drift.md](drift.md).
+**tools/ is context too** you can look and use stuff in tools/, executable patterns.
 
 ## what you can actually do
 
@@ -98,8 +98,7 @@ code.md ⟜ how we write code
 lattice.md ⟜ another shape, like a table in markdown
 reflect.md  ⟜ if in doubt, reflect on out.
 breathe.md ⟜ a breathing space in our mudball
-worker.md ⟜ field worker semantic palette (spinners, gremlins, fairies, sparks, circuits)
-field-guide.md ⟜ field execution model, yin coordination, supe oversight
+yin.md ⟜ yin coordination, flow ⊙ work ⊙ breathe cycle
 drift.md ⟜ semantic drift detection, recovery, and reestablishing state
 
 ## Agents 
@@ -146,7 +145,7 @@ There's a lot of ways you can get comfy with markdown-general.
 
 ### **next steps**
 
-**read our guides** ⟜ follow the work/ trails or venture offtrack into the zone/
+**read our guides** ⟜ follow the work/ trails or venture offtrack into the yard/
 **make it make sense** ⟜ take a [breathe](breathe).
 **make a commit** ⟜ as you look around, help us tidy up a bit.
 **sign our visitor book** ⟜ hope you enjoyed our little place, compacts every Friday.
