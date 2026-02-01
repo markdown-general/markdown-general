@@ -1,8 +1,8 @@
 # grammar.md
 
-## decking ⟜ grammatical definition
+## deck ⟜ grammatical definition
 
-**decking** ⟜ a grammar for markdown
+**deck** ⟜ a grammar for markdown
 ⟜ permissive by default, relaxed & flexible
 ⟜ [grammar](grammar) for design, [decking](decking) for usage
 
@@ -10,24 +10,18 @@ lead ⟜ a few tokens
      ⟜ slug
 dash ⟜ the type of elab
 elab ⟜ an elaboration of the lead
-slug ⟜ lead (dash elab)*
-deck ⟜ a few slugs
+line ⟜ lead (dash elab)*
+deck ⟜ a few lines
 card ⟜ a few decks
      ⟜ a markdown file
 
 ## design
-
-resolution 
 
 We see this grammar working in any resolution between tokens (pair token frequency say) and card (are these two markdown files linked).
 
 tokens ⇄ lead ⇄ slug ⇄ deck ⇄ card
 
 with dashes forming the types of ⇄ 
-
-
-
-
 
 These definitions describe patterns, not requirements ⟜ any element can be present, absent, or rearranged as the content demands.
 
@@ -130,20 +124,6 @@ Decking isn't creating structure—it's naming the elaborative structure already
 
 The grammar makes visible what was always there.
 
-## duality collapse
+⊢ dashboard R&D ⊣ ◊ ⬡ ⟜ create [dashboard](dashboard.md) ⋆ revise to a console-based system ⊙ go back three steps ◉ done
 
-We dissolved the false binary: **structural position = semantic value**
-
-Hierarchy is organizational convenience, not quality ranking. Cut based on content, not position. Structure and flexibility aren't opposites—they're aspects of the same phenomenon.
-
-Decking as thinking tool, not specification language.
-
-
-# glossary ⟜ decks for common terms
-
-**card** ⟜ markdown file
-  ⟜ it gets boring to type "markdown file"
-  ⟜ it gets confusing to just call it "markdown"
-  ⟜ like a palm card for our rememberings
-  ⟜ consistent name for otherwise disparate processes: tools, examples, job requests, upgrades.
 

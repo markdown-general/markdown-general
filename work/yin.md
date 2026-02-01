@@ -6,7 +6,11 @@
 
 **Work** ⟜ Commit to a card and an execution, decision made.
 
-**Breathe** ⟜ Leave space. Check in with the runner ⊳ if they're not "out for a cuppa". Breathe for a moment and let the action have its effect. Signals will arrive when they arrive.
+**Breathe** ⟜ Pause and synchronize.
+
+Review what actually happened: did execution match strategy? Update the card's flow markers (✓ for complete, ◊ for current position, 🚩 for divergence) to reflect actual state. Cards are living records, not fixed plans.
+
+Check in with the runner ⊳ if they're not "out for a cuppa". Align on signals and decide next moves. Breathe for a moment and let the action have its effect.
 
 The yin chair is the only place where an agent can do the actual pattern ⊙ reflection work; field agents can only work within the file system. So we have to be quite flexible. We operate in two major modes:
 
