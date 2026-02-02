@@ -49,20 +49,25 @@ Stdout shows: repeated "id :: a -> a" then signal 15 (SIGTERM), never returned r
 
 ✓ ⊢ timing experiments ⊣
   - Run `cabal run repl-explore` in background
-  - Send commands to /tmp/ghci-in from another terminal
-  - Measure latency (send → response in log file)
+  - Measure: write query → detect it in log → match response → filter → report
+
+✓ ⊢ implement runBenchmark in grepl-explore.hs ⊣
+  - benchmarkChannelLatency :: Int -> PerfT IO [[Double]] ()
+  - Writes queries with markers, polls output log every 10ms
+  - Timeout: 5 seconds per query, 500 polls max
+  - Integrated with Perf library reporting
+  - Usage: `cabal run grepl-explore -- --benchmark --runs 100 --length 10`
 
 ✓ ⊢ grepl rename ⊣
   - repo renamed to grepl (general repl)
   - channel and channel-exe verified and reestablished
 
-◊ ⊢ add fsnotify watcher ⊣
+✓ ⊢ add fsnotify watcher ⊣
   - ✓ Add fsnotify + stm + filepath to cabal deps
   - ✓ Create Grepl.Watcher module (watchMarkdown, watchMarkdownWith)
   - ✓ Filter for .md file events (Added/Modified only)
   - ✓ Push filepaths to TChan for async event handling
   - ⟜ Proof of concept: String-based, IORef-ready for signal flow
-  - ⟜ Next: integrate with repl channel to watch for incoming commands
 
 ⟝ [orchestration] ⟞
   - ✓ fsnotify (done)
