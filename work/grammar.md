@@ -7,7 +7,7 @@
 ⟜ [grammar](grammar) for design, [decking](decking) for usage
 
 lead ⟜ a few tokens
-     ⟜ slug
+     ⟜ line
 dash ⟜ the type of elab
 elab ⟜ an elaboration of the lead
 line ⟜ lead (dash elab)*
