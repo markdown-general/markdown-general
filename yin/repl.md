@@ -54,10 +54,10 @@ Stdout shows: repeated "id :: a -> a" then signal 15 (SIGTERM), never returned r
 ✓ ⊢ implement runBenchmark in grepl-explore.hs ⊣
   - benchChannelConfig: isolated log files (*.bench.md)
   - Channel + watcher run in async threads (setup outside measured code)
-  - benchmarkChannelLatency :: TChan String -> PerfT IO [[Double]] ()
+  - benchmarkChannelThroughput :: TChan String -> IO () (measures via perf library)
   - Writes query to FIFO, waits on TChan signal (no polling)
-  - Latency = time from write to watcher signal receipt
-  - Usage: `cabal run grepl-explore -- --benchmark --runs 100`
+  - Latency measured: ~41 microseconds (--runs 1)
+  - Usage: `cabal run grepl-explore -- --benchmark --runs 1`
 
 ✓ ⊢ grepl rename ⊣
   - repo renamed to grepl (general repl)
@@ -72,7 +72,8 @@ Stdout shows: repeated "id :: a -> a" then signal 15 (SIGTERM), never returned r
 
 ⟝ [orchestration] ⟞
   - ✓ fsnotify (done)
-  - ✓ [integrate watcher with channel] (benchmark working)
+  - ✓ [integrate watcher with channel] (benchmark working with --runs 1)
+  - 🚩 Blocking issue: --runs 3+ freezes after first signal
   - ^ [queries in logged]
   - [queries matched]
   - (initial) filtering
