@@ -66,7 +66,7 @@ Stdout shows: repeated "id :: a -> a" then signal 15 (SIGTERM), never returned r
 
 ⟝ [orchestration] ⟞
   - ✓ fsnotify (done)
-  - [integrate watcher with channel]
+  - ^ [integrate watcher with channel]
   - [queries in logged]
   - [queries matched]
   - (initial) filtering
